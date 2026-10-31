@@ -115,7 +115,7 @@
       ${safeUrl(D.wide) || show ? photo(D.wide, "wide-photo") : `<div class="gap-photo paper"></div>`}
 
       ${filmSlots.length || safeUrl(D.filmBig) || show ? `
-      <section class="sec youth paper" data-tear>
+      <section class="sec youth paper">
         <div class="youth-title" data-tear="bottom">
           <div ${A("s1", "fade-in-left", 1.5)}>${esc(D.youthTitle1)}</div>
           <div ${A("s2", "fade-in-right", 1.5)}>${esc(D.youthTitle2)}</div>
@@ -139,7 +139,7 @@
       </section>
 
       ${letter ? `
-      <section class="sec letter paper" data-tear>
+      <section class="sec letter plain" data-tear>
         <h2 ${A("sec-title", "pop", 1.3)}>LƯU BÚT</h2>
         <div ${A("letter-body", "blur-in", 1)}>${letter}</div>
         <div ${A("sign", "blur-in", 2.3)}>${esc(D.signature || D.name)}</div>
@@ -151,7 +151,7 @@
         <div class="album-grid">${albumHtml}</div>
       </section>` : ""}
 
-      <section class="sec wish paper" data-tear>
+      <section class="sec wish plain" data-tear>
         <h2 ${A("sec-title", "pop", 1.3)}>${esc(D.wishTitle)}</h2>
         <form id="wishForm" autocomplete="off">
           <input name="n" maxlength="60" placeholder="Tên của bạn là?" required>

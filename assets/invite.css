@@ -4,7 +4,8 @@
   --slate: #334155;
   --gray: #6c6f7f;
   --outside: #f6f6f1;
-  --paper: #efece5;
+  --paper: #eaebed;
+  --plain: #f8fafc;
   --w: min(100vw, 430px);
   --u: calc(var(--w) / 375);
   --tearH: calc(var(--w) * 280 / 860);
@@ -26,11 +27,13 @@ button { font: inherit; }
   animation: silk-sheen 9s ease-in-out infinite;
 }
 .silk > * { position: relative; z-index: 1; }
-.paper { background: var(--paper) url(bg/paper.webp) 0 calc(-1 * var(--tearH)) / 100% auto repeat-y; }
+.paper { background: var(--paper) url(bg/paper.webp) 0 calc(-1 * var(--tearH)) / 256px; }
+.plain { background: var(--plain); }
 
-/* mép giấy xé: .tear là phần giấy (cùng ảnh nền, khoét theo mask), .tear-fx là nếp nhàu + bóng đổ */
+/* mép giấy xé: .tear là phần giấy (cùng nền với section, khoét theo mask), .tear-fx là nếp nhàu + viền trắng + bóng đổ */
 .tear, .tear-fx { position: absolute; left: 0; width: 100%; height: var(--tearH); top: 1px; transform: translateY(-100%); pointer-events: none; z-index: 4; }
-.tear { background: var(--paper) url(bg/paper.webp) 0 0 / 100% auto repeat-y; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.tear { background: var(--paper) url(bg/paper.webp) 0 0 / 256px; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.plain > .tear { background: var(--plain); }
 .tear-fx { background: center / 100% 100% no-repeat; z-index: 5; }
 .tear.flip, .tear-fx.flip { top: auto; bottom: 1px; transform: translateY(100%); }
 
