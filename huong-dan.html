@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hướng Dẫn Sử Dụng</title>
+<meta name="description" content="Hướng dẫn làm thiệp mời tốt nghiệp online cho khách và admin">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Viaoda+Libre&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #010e52; --ink: #23263a; --muted: #6d7285; --line: #e1e4ec; --bg: #f4f5f8; --card: #fff; --tip: #eef3ff; --warn: #fff6e5; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font: 500 15px/1.65 "Quicksand", system-ui, sans-serif; }
+  a { color: var(--accent); font-weight: 700; overflow-wrap: anywhere; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 60px; }
+  header { text-align: center; padding: 36px 16px 22px; }
+  header h1 { font: 400 32px/1.2 "Viaoda Libre", serif; color: var(--accent); }
+  header p { color: var(--muted); margin-top: 6px; }
+  .tabs { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tabs button { border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 11px; font: 700 15px "Quicksand", sans-serif; color: var(--muted); cursor: pointer; }
+  .tabs button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .panel[hidden] { display: none; }
+  .links { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 8px 0 18px; }
+  .links div { margin: 4px 0; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; }
+  .step h2 { font: 700 17px/1.4 "Quicksand", sans-serif; color: var(--accent); display: flex; gap: 10px; align-items: baseline; }
+  .step h2 .n { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; display: inline-grid; place-items: center; font-size: 14px; transform: translateY(-1px); }
+  .step > *:not(h2) { margin-top: 8px; }
+  ol, ul { padding-left: 22px; }
+  li { margin: 3px 0; }
+  b { font-weight: 700; }
+  .ui { display: inline-block; background: #eef0f6; border: 1px solid #dde1ea; border-radius: 6px; padding: 0 6px; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+  code { background: #eef0f6; border-radius: 5px; padding: 1px 6px; font-size: 13.5px; overflow-wrap: anywhere; }
+  pre { background: #1d2033; color: #e8ebf5; border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  .tip, .warn { border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+  .tip { background: var(--tip); }
+  .warn { background: var(--warn); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 7px 6px; vertical-align: top; }
+  th { color: var(--muted); font-weight: 700; }
+  .faq dt { font-weight: 700; margin-top: 12px; }
+  .faq dd { color: #454a5c; }
+  footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Hướng Dẫn Sử Dụng</h1>
+  <p>Thiệp mời tốt nghiệp online</p>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="on" data-tab="khach" role="tab">👩‍🎓 Dành cho khách</button>
+    <button data-tab="admin" role="tab">🔑 Dành cho admin</button>
+  </div>
+
+  <div class="links">
+    <div>Trang làm thiệp: <a class="L-admin" href="admin.html">admin.html</a></div>
+    <div>Link thiệp của bạn sẽ có dạng: <code class="L-card">…/ten-link</code></div>
+  </div>
+
+  <!-- ===================== KHÁCH ===================== -->
+  <section class="panel" id="khach">
+    <div class="step">
+      <h2><span class="n">1</span>Chuẩn bị</h2>
+      <ul>
+        <li><b>Mã kích hoạt</b> do người bán gửi, dạng <code>ABCD-EFGH</code>. Mỗi mã chỉ dùng được 1 lần.</li>
+        <li>Một <b>email</b> bạn dùng thường xuyên và một <b>mật khẩu</b> từ 6 ký tự trở lên.</li>
+        <li>Ảnh tốt nghiệp: 1 ảnh dọc làm bìa, vài ảnh ngang cho cuộn phim, ảnh cho album.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">2</span>Đăng ký tài khoản</h2>
+      <ol>
+        <li>Mở trang làm thiệp: <a class="L-admin" href="admin.html">admin.html</a></li>
+        <li>Bấm tab <span class="ui">Đăng ký</span>.</li>
+        <li>Nhập email, mật khẩu, nhập lại mật khẩu, rồi bấm <span class="ui">Đăng ký</span>.</li>
+      </ol>
+      <p class="tip">Lần sau quay lại thì dùng tab <span class="ui">Đăng nhập</span> với đúng email và mật khẩu này.</p>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">3</span>Kích hoạt thiệp</h2>
+      <ol>
+        <li>Nhập <b>mã kích hoạt</b>, viết hoa hay thường đều được.</li>
+        <li>Chọn <b>tên link</b> cho thiệp: chữ thường không dấu, số, nối bằng dấu gạch ngang. Ví dụ <code>bich-ngoc</code>, <code>minh-anh-2026</code>.</li>
+        <li>Bấm <span class="ui">Kích hoạt</span>. Bạn sẽ vào thẳng trang sửa thiệp.</li>
+      </ol>
+      <p class="warn">⚠️ <b>Tên link không đổi được</b> sau khi kích hoạt, nên chọn kỹ. Mỗi tài khoản chỉ có <b>1 thiệp</b>.</p>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">4</span>Điền nội dung thiệp</h2>
+      <p>Trang sửa thiệp chia thành nhiều mục. Bấm vào tên mục để mở ra:</p>
+      <table>
+        <tr><th>Mục</th><th>Điền gì</th></tr>
+        <tr><td><b>Thông tin thiệp</b></td><td>Tên người tốt nghiệp, bật/tắt hiện công khai, màu chủ đạo</td></tr>
+        <tr><td><b>Trường học</b></td><td>Logo trường, tên trường tiếng Việt và tiếng Anh</td></tr>
+        <tr><td><b>Ảnh bìa</b></td><td>Ảnh chính (ảnh <b>dọc</b>), chữ "GRADUATION", chữ viết tay, câu dưới ảnh</td></tr>
+        <tr><td><b>Ngày giờ</b></td><td>Ngày tốt nghiệp (lịch tự đánh dấu trái tim), giờ, ảnh ngang dưới lịch</td></tr>
+        <tr><td><b>Thanh Xuân</b></td><td>Ảnh cuộn phim (nên từ 4 ảnh), ảnh lớn bên phải (ảnh <b>dọc</b>)</td></tr>
+        <tr><td><b>Địa điểm</b></td><td>Tên nơi tổ chức, địa chỉ. Bản đồ tự hiện theo địa chỉ.</td></tr>
+        <tr><td><b>Lưu bút</b></td><td>Lời nhắn gửi mọi người. Cách một dòng trống để sang đoạn mới.</td></tr>
+        <tr><td><b>Album ảnh</b></td><td>Cứ 3 ảnh thành một cụm: 2 ảnh nhỏ trên, 1 ảnh ngang dưới</td></tr>
+        <tr><td><b>Lời nhắn</b></td><td>Xem và xóa lời chúc khách gửi</td></tr>
+        <tr><td><b>Lời cảm ơn</b></td><td>Ảnh nền, tiêu đề, lời cảm ơn cuối thiệp</td></tr>
+        <tr><td><b>Nhạc nền</b></td><td>Tải file MP3 (nên dưới 10MB) hoặc dán link nhạc</td></tr>
+      </table>
+      <p><b>Tải ảnh:</b> bấm vào ô ảnh hoặc kéo ảnh thả vào. Ảnh được tự thu nhỏ cho nhẹ. Ở các mục nhiều ảnh, dùng nút <span class="ui">←</span> <span class="ui">→</span> để đổi thứ tự, <span class="ui">×</span> để xóa.</p>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">5</span>Xem trước và lưu</h2>
+      <ul>
+        <li>Trên máy tính, khung điện thoại bên phải cập nhật <b>ngay khi bạn sửa</b>. Trên điện thoại, bấm <span class="ui">Xem trước</span>.</li>
+        <li>Thấy nhãn <span class="ui">Chưa lưu</span> nghĩa là còn thay đổi chưa lưu. Bấm <span class="ui">Lưu</span> (hoặc Ctrl + S) để lưu.</li>
+      </ul>
+      <p class="warn">⚠️ Nhớ bấm <b>Lưu</b> trước khi thoát. Đợi ảnh tải xong rồi hãy lưu.</p>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">6</span>Gửi thiệp cho mọi người</h2>
+      <ol>
+        <li>Bấm <span class="ui">Sao chép link</span>, rồi dán gửi qua Zalo, Messenger, Instagram…</li>
+        <li>Bấm <span class="ui">Mở thiệp ↗</span> để xem thiệp đúng như khách sẽ thấy.</li>
+        <li>Muốn tạm ẩn thiệp: tắt <b>Hiện công khai</b> rồi bấm Lưu.</li>
+      </ol>
+      <p class="tip">Sửa thiệp lúc nào cũng được. Link giữ nguyên, khách mở lại là thấy bản mới.</p>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">7</span>Câu hỏi thường gặp</h2>
+      <dl class="faq">
+        <dt>Báo "Mã kích hoạt không đúng" / "Mã này đã được sử dụng"?</dt>
+        <dd>Kiểm tra lại từng ký tự, có dấu gạch ngang ở giữa. Nếu vẫn báo lỗi, liên hệ người bán để được cấp lại.</dd>
+        <dt>Báo "Tên link này đã có người dùng"?</dt>
+        <dd>Chọn tên khác, ví dụ thêm năm hoặc tên trường: <code>bich-ngoc-2026</code>.</dd>
+        <dt>Quên mật khẩu?</dt>
+        <dd>Liên hệ người bán để được đặt lại mật khẩu.</dd>
+        <dt>Nhạc không tự phát khi mở thiệp?</dt>
+        <dd>Điện thoại chặn tự phát nhạc. Nhạc sẽ phát khi người xem chạm vào thiệp lần đầu, hoặc bấm nút nhạc ở góc dưới.</dd>
+        <dt>Ảnh tải lâu hoặc báo lỗi?</dt>
+        <dd>Kiểm tra mạng, thử lại với ảnh JPG/PNG. Nhạc chỉ nhận file MP3/M4A dưới 15MB.</dd>
+        <dt>Lời chúc linh tinh?</dt>
+        <dd>Mở mục <b>Lời nhắn</b> → bấm <span class="ui">Xóa</span> ở lời chúc đó.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===================== ADMIN ===================== -->
+  <section class="panel" id="admin" hidden>
+    <div class="step">
+      <h2><span class="n">1</span>Đăng nhập admin</h2>
+      <ol>
+        <li>Mở <a class="L-admin" href="admin.html">admin.html</a> → tab <span class="ui">Đăng nhập</span> → email + mật khẩu admin.</li>
+        <li>Admin thấy thêm: danh sách <b>tất cả thiệp</b> bên trái (kèm email chủ thiệp), nút <span class="ui">+ Tạo thiệp mới</span>, <span class="ui">🔑 Mã kích hoạt</span>, <span class="ui">Nhân bản</span>, <span class="ui">Xóa</span>.</li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">2</span>Bán thiệp: tạo mã kích hoạt</h2>
+      <ol>
+        <li>Bấm <span class="ui">🔑 Mã kích hoạt</span>.</li>
+        <li>Nhập <b>số lượng mã</b> (1–50 mỗi lần) và <b>ghi chú</b> (tên khách, mã đơn hàng…).</li>
+        <li>Bấm <span class="ui">Tạo mã</span>. Tạo 1 mã thì mã tự được sao chép.</li>
+        <li>Gửi khách tin nhắn kiểu như sau:</li>
+      </ol>
+      <pre id="msgTemplate">Cảm ơn bạn đã đặt thiệp 🎓
+• Mã kích hoạt: ABCD-EFGH
+• Trang làm thiệp: …/admin.html
+• Hướng dẫn: …/huong-dan.html
+Đăng ký bằng email → nhập mã + chọn tên link → làm thiệp và bấm Lưu.</pre>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">3</span>Theo dõi mã</h2>
+      <ul>
+        <li>Trong <span class="ui">🔑 Mã kích hoạt</span>, mỗi mã hiện <b>Chưa dùng</b> hoặc <b>Đã dùng bởi email… · link…</b>.</li>
+        <li>Bấm <span class="ui">Sao chép</span> để gửi lại mã. Mã chưa dùng có thể <span class="ui">Xóa</span> (ví dụ khách hủy đơn).</li>
+        <li>Mã đã dùng không xóa được, để giữ lịch sử bán hàng.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">4</span>Quản lý thiệp</h2>
+      <ul>
+        <li>Bấm một thiệp ở danh sách bên trái để sửa hộ khách: đổi chữ, ảnh, nhạc, ẩn/hiện.</li>
+        <li><b>Chỉ admin đổi được tên link.</b> Khách muốn đổi thì bạn sửa ô "Tên link" rồi bấm Lưu, sau đó gửi khách link mới.</li>
+        <li><span class="ui">+ Tạo thiệp mới</span> để tạo thiệp không cần mã (thiệp của bạn, thiệp tặng…). <span class="ui">Nhân bản</span> để copy nhanh thiệp có sẵn.</li>
+        <li><span class="ui">Xóa</span> xóa luôn thiệp và toàn bộ lời chúc. Không khôi phục được.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">5</span>Hỗ trợ khách quên mật khẩu</h2>
+      <p>Vào Supabase → <b>SQL Editor</b> → query mới, dán đoạn dưới (sửa email và mật khẩu mới) → <b>Run</b>, rồi gửi mật khẩu mới cho khách:</p>
+      <pre>update auth.users
+set encrypted_password = extensions.crypt('MatKhauMoi123', extensions.gen_salt('bf'))
+where email = 'email-cua-khach@gmail.com';</pre>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">6</span>Thêm admin khác (nếu cần)</h2>
+      <p>Cho người đó đăng ký tài khoản ở trang admin.html như khách (không cần nhập mã), rồi chạy trong SQL Editor:</p>
+      <pre>insert into public.admins (user_id)
+select id from auth.users where email = 'email-admin-moi@gmail.com'
+on conflict do nothing;</pre>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">7</span>Lưu ý vận hành</h2>
+      <ul>
+        <li><b>Supabase miễn phí tự tạm dừng</b> nếu khoảng 1 tuần không ai dùng. Thiệp báo "Không tải được" thì vào supabase.com → project → <b>Restore project</b>. Nên kiểm tra trước các ngày khách gửi thiệp.</li>
+        <li>Gói miễn phí: <b>1GB</b> ảnh/nhạc, <b>500MB</b> dữ liệu, khoảng vài trăm thiệp. Xóa thiệp cũ không còn dùng để giải phóng chỗ.</li>
+        <li>Đăng ký và kích hoạt chạy được vì đã <b>bật Allow new users to sign up</b> và <b>tắt Confirm email</b> trong Supabase → Authentication → Sign In / Providers. Đừng đổi lại.</li>
+        <li>Không bao giờ đưa khóa <b>service_role</b> vào web hay gửi cho ai.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>Thiệp Mời Tốt Nghiệp Online</footer>
+</div>
+
+<script>
+  // Link đúng theo nơi đang mở (GitHub Pages hoặc máy thử)
+  const base = location.origin + location.pathname.replace(/[^/]*$/, "");
+  document.querySelectorAll(".L-admin").forEach(a => { a.href = base + "admin.html"; a.textContent = base + "admin.html"; });
+  document.querySelectorAll(".L-card").forEach(c => (c.textContent = base + "ten-link"));
+  const msg = document.getElementById("msgTemplate");
+  msg.textContent = msg.textContent.replace("…/admin.html", base + "admin.html").replace("…/huong-dan.html", base + "huong-dan.html");
+
+  // Tab khách / admin, nhớ theo #admin trên link
+  function show(tab) {
+    document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+    document.querySelectorAll(".panel").forEach(p => (p.hidden = p.id !== tab));
+  }
+  document.querySelector(".tabs").addEventListener("click", e => {
+    const b = e.target.closest("[data-tab]");
+    if (!b) return;
+    show(b.dataset.tab);
+    history.replaceState(null, "", b.dataset.tab === "admin" ? "#admin" : location.pathname);
+  });
+  if (location.hash === "#admin") show("admin");
+</script>
+</body>
+</html>
