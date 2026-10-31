@@ -1,4 +1,5 @@
-/* CMS: tạo, sửa, xóa thiệp; tải ảnh; xem trước trực tiếp; quản lý lời chúc. */
+/* CMS: tạo, sửa, xóa thiệp; tải ảnh; xem trước trực tiếp; quản lý lời chúc.
+   Admin: toàn quyền + cấp mã kích hoạt. Khách: đăng ký → nhập mã → chỉ sửa đúng 1 thiệp của mình. */
 (function () {
   const S = window.Store;
   const $ = id => document.getElementById(id);
@@ -65,7 +66,8 @@
   ];
   const ITEM = Object.fromEntries(GROUPS.flatMap(g => g.items).map(it => [it[0], it]));
 
-  const state = { list: [], cur: null, dirty: false, busy: {}, wishes: [], previewReady: false };
+  const state = { list: [], cur: null, dirty: false, busy: {}, wishes: [], previewReady: false, role: "admin", codes: [] };
+  const isCustomer = () => state.role === "customer";
 
   /* ---------- tiện ích ---------- */
   let toastT;
@@ -79,8 +81,13 @@
   function friendlyError(e) {
     const m = String((e && (e.message || e.error_description)) || e);
     if (/duplicate|unique/i.test(m)) return "Tên link này đã có thiệp khác dùng rồi, hãy đổi tên link.";
-    if (/row-level security|permission|not authorized|403/i.test(m)) return "Tài khoản này chưa có quyền admin. Xem bước 4 trong HUONG-DAN.md.";
+    if (/row-level security|permission|not authorized|403/i.test(m)) return isCustomer() ? "Bạn không có quyền làm việc này." : "Tài khoản này chưa có quyền admin. Xem bước 4 trong HUONG-DAN.md.";
     if (/Invalid login/i.test(m)) return "Sai email hoặc mật khẩu.";
+    if (/already registered|already been registered/i.test(m)) return "Email này đã đăng ký rồi, hãy chuyển sang Đăng nhập.";
+    if (/Signups not allowed|signup.*disabled/i.test(m)) return "Trang chưa mở đăng ký. Admin cần bật cho phép đăng ký trong Supabase.";
+    if (/Email not confirmed/i.test(m)) return "Email chưa được xác nhận. Mở hộp thư và bấm link xác nhận trước nhé.";
+    if (/Password should be at least|weak password/i.test(m)) return "Mật khẩu tối thiểu 6 ký tự.";
+    if (/rate limit/i.test(m)) return "Thao tác quá nhiều lần, đợi một lát rồi thử lại.";
     if (/Failed to fetch|NetworkError/i.test(m)) return "Mất kết nối mạng, thử lại nhé.";
     if (/exceeded the maximum allowed size|too large/i.test(m)) return "File quá lớn.";
     return m;
@@ -116,6 +123,7 @@
       <button class="inv-item${state.cur && state.cur.id === i.id ? " active" : ""}" data-id="${i.id}">
         <b>${esc((i.data && i.data.name) || i.title || i.slug)}</b>
         <small><span class="dot${i.published ? "" : " off"}"></span>${esc(i.slug)}</small>
+        ${i.owner_email ? `<span class="owner">👤 ${esc(i.owner_email)}</span>` : ""}
       </button>`).join("");
   }
   $("invList").addEventListener("click", e => {
@@ -143,6 +151,7 @@
     state.cur = inv ? JSON.parse(JSON.stringify({ ...inv, data: S.withDefaults(inv.data) })) : null;
     state.busy = {};
     markDirty(false);
+    $("codesBody").hidden = true;
     $("emptyState").hidden = !!inv;
     $("editorBody").hidden = !inv;
     renderList();
@@ -175,7 +184,9 @@
       case "textarea-tall":
         inner = `<textarea data-k="${k}" class="${type === "textarea-tall" ? "tall" : ""}">${esc(v)}</textarea>`; break;
       case "slug":
-        inner = `<div class="slug-wrap"><span title="${esc(baseUrl())}">${esc(baseUrl().replace(/^https?:\/\//, ""))}</span><input type="text" data-k="${k}" value="${esc(v)}" spellcheck="false"></div>`; break;
+        inner = `<div class="slug-wrap"><span title="${esc(baseUrl())}">${esc(baseUrl().replace(/^https?:\/\//, ""))}</span><input type="text" data-k="${k}" value="${esc(v)}" spellcheck="false" ${isCustomer() ? "disabled" : ""}></div>`;
+        if (isCustomer()) return `<div class="f" data-field="${k}"><span>${esc(label)}</span>${inner}<small class="hint">Tên link đã cố định. Liên hệ admin nếu cần đổi.</small></div>`;
+        break;
       case "toggle":
         inner = `<label class="toggle"><input type="checkbox" data-k="${k}" ${v ? "checked" : ""}><i></i><span>${v ? "Đang hiện" : "Đang ẩn"}</span></label>`; break;
       case "color":
@@ -436,24 +447,144 @@
   $("previewToggle").onclick = () => $("previewPane").classList.add("show");
   $("previewPane").addEventListener("click", e => { if (e.target === $("previewPane")) $("previewPane").classList.remove("show"); });
 
-  /* ---------- đăng nhập ---------- */
-  async function showApp() {
+  /* ---------- mã kích hoạt (admin) ---------- */
+  async function showCodes() {
+    if (state.dirty && !confirm("Thiệp đang sửa chưa lưu. Bỏ các thay đổi?")) return;
+    $("emptyState").hidden = true;
+    $("editorBody").hidden = true;
+    $("codesBody").hidden = false;
+    $("codesList").innerHTML = `<div class="hint">Đang tải…</div>`;
+    try { renderCodes(await S.listCodes()); }
+    catch (e) { $("codesList").innerHTML = `<div class="err">${esc(friendlyError(e))}</div>`; }
+  }
+  function renderCodes(list) {
+    state.codes = list;
+    if (!list.length) { $("codesList").innerHTML = `<div class="hint">Chưa có mã nào.</div>`; return; }
+    const fmt = t => new Date(t).toLocaleString("vi-VN");
+    const unused = list.filter(c => !c.used_at).length;
+    $("codesList").innerHTML = `<div class="hint" style="margin-bottom:8px">${list.length} mã · ${unused} chưa dùng</div><div class="codes">${list.map(c => {
+      const inv = c.invitation_id && state.list.find(i => i.id === c.invitation_id);
+      const status = c.used_at
+        ? `Đã dùng bởi <b>${esc(c.used_email || "?")}</b> · ${esc(fmt(c.used_at))}${inv ? ` · link: <b>${esc(inv.slug)}</b>` : ""}`
+        : `<b>Chưa dùng</b> · tạo ${esc(fmt(c.created_at))}`;
+      return `<div class="code-row${c.used_at ? " used" : ""}"><code>${esc(c.code)}</code>
+        <div class="meta">${c.note ? esc(c.note) + "<br>" : ""}${status}</div>
+        <div class="acts"><button type="button" class="ghost sm" data-copy="${esc(c.code)}">Sao chép</button>${c.used_at ? "" : `<button type="button" class="danger sm" data-del="${esc(c.code)}">Xóa</button>`}</div></div>`;
+    }).join("")}</div>`;
+  }
+  $("codesBtn").onclick = showCodes;
+  $("codesClose").onclick = () => {
+    $("codesBody").hidden = true;
+    if (state.cur) $("editorBody").hidden = false; else $("emptyState").hidden = false;
+  };
+  $("codeCreate").onclick = async () => {
+    const n = Math.max(1, Math.min(50, parseInt($("codeCount").value, 10) || 1));
+    const btn = $("codeCreate");
+    btn.disabled = true;
+    try {
+      const made = await S.createCodes(n, $("codeNote").value.trim());
+      $("codeNote").value = "";
+      renderCodes([...made, ...state.codes]);
+      if (made.length === 1) { try { await navigator.clipboard.writeText(made[0].code); } catch {} }
+      toast(made.length === 1 ? `Đã tạo mã ${made[0].code} (đã sao chép)` : `Đã tạo ${made.length} mã`);
+    } catch (e) { toast(friendlyError(e), true); }
+    finally { btn.disabled = false; }
+  };
+  $("codesList").addEventListener("click", async e => {
+    const cp = e.target.closest("[data-copy]"), del = e.target.closest("[data-del]");
+    if (cp) {
+      try { await navigator.clipboard.writeText(cp.dataset.copy); toast("Đã sao chép mã"); }
+      catch { prompt("Sao chép mã:", cp.dataset.copy); }
+    }
+    if (del && confirm(`Xóa mã ${del.dataset.del}?`)) {
+      try {
+        await S.deleteCode(del.dataset.del);
+        renderCodes(state.codes.filter(c => c.code !== del.dataset.del));
+        toast("Đã xóa mã");
+      } catch (err) { toast(friendlyError(err), true); }
+    }
+  });
+
+  /* ---------- đăng nhập / đăng ký ---------- */
+  async function showApp(only) {
     $("loginView").hidden = true;
+    $("redeemView").hidden = true;
     $("appView").hidden = false;
-    $("logoutBtn").hidden = S.mode === "demo";
     if (!frame.src) frame.src = "index.html?preview=1";
+    if (only) { state.list = [only]; renderList(); select(only); return; }
     await loadList();
     if (state.list[0]) select(state.list[0]);
   }
+  // Sau khi đăng nhập: admin → toàn quyền; khách → thiệp của mình hoặc màn nhập mã
+  async function afterLogin() {
+    const user = await S.currentUser().catch(() => null);
+    $("whoEmail").textContent = user && user.email && S.mode !== "demo" ? user.email : "";
+    $("logoutBtn").hidden = S.mode === "demo";
+    let admin = false;
+    try { admin = await S.isAdmin(); } catch (e) { console.warn(e); }
+    state.role = admin ? "admin" : "customer";
+    document.body.classList.toggle("customer", !admin);
+    $("loginView").hidden = true;
+    if (admin) return showApp();
+    let mine = null;
+    try { mine = await S.getMyInvitation(); } catch (e) { toast(friendlyError(e), true); }
+    if (mine) return showApp(mine);
+    $("redeemBase").textContent = baseUrl().replace(/^https?:\/\//, "");
+    $("redeemView").hidden = false;
+  }
+
+  let loginTab = "in";
+  document.querySelector(".tabs").addEventListener("click", e => {
+    const b = e.target.closest("[data-tab]");
+    if (!b) return;
+    loginTab = b.dataset.tab;
+    document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+    const up = loginTab === "up", f = $("loginForm");
+    $("loginTitle").textContent = up ? "Đăng ký" : "Đăng nhập";
+    $("loginHint").textContent = up ? "Tạo tài khoản bằng email, sau đó nhập mã kích hoạt để làm thiệp." : "Đăng nhập bằng email để làm thiệp của bạn.";
+    $("loginBtn").textContent = up ? "Đăng ký" : "Đăng nhập";
+    $("pw2Row").hidden = !up;
+    f.password2.required = up;
+    f.password.autocomplete = up ? "new-password" : "current-password";
+    $("loginErr").textContent = "";
+  });
   $("loginForm").addEventListener("submit", async e => {
     e.preventDefault();
-    const f = e.target, btn = f.querySelector("button");
+    const f = e.target, btn = $("loginBtn");
+    const email = f.email.value.trim(), pw = f.password.value;
     $("loginErr").textContent = "";
+    if (loginTab === "up" && pw !== f.password2.value) { $("loginErr").textContent = "Hai lần nhập mật khẩu không giống nhau."; return; }
     btn.disabled = true;
-    try { await S.signIn(f.email.value.trim(), f.password.value); showApp(); }
-    catch (err) { $("loginErr").textContent = friendlyError(err); }
+    try {
+      if (loginTab === "up") {
+        const session = await S.signUp(email, pw);
+        if (!session) { $("loginErr").textContent = "Đã gửi email xác nhận. Mở hộp thư, bấm link xác nhận rồi quay lại Đăng nhập."; return; }
+      } else {
+        await S.signIn(email, pw);
+      }
+      await afterLogin();
+    } catch (err) { $("loginErr").textContent = friendlyError(err); }
     finally { btn.disabled = false; }
   });
+
+  /* ---------- kích hoạt mã (khách) ---------- */
+  $("redeemForm").slug.addEventListener("input", e => { e.target.value = e.target.value.toLowerCase().replace(/\s+/g, "-"); });
+  $("redeemForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = e.target, btn = f.querySelector("button");
+    const slug = S.slugify(f.slug.value);
+    f.slug.value = slug;
+    $("redeemErr").textContent = "";
+    if (!SLUG_RE.test(slug)) { $("redeemErr").textContent = "Tên link chỉ gồm chữ thường không dấu, số và dấu gạch ngang."; return; }
+    btn.disabled = true;
+    try {
+      const inv = await S.redeemCode(f.code.value.trim().toUpperCase(), slug);
+      toast("Kích hoạt thành công! Bắt đầu làm thiệp nhé 🎓");
+      await showApp(inv);
+    } catch (err) { $("redeemErr").textContent = friendlyError(err); }
+    finally { btn.disabled = false; }
+  });
+
   $("logoutBtn").onclick = async () => {
     if (state.dirty && !confirm("Thiệp đang sửa chưa lưu. Vẫn đăng xuất?")) return;
     await S.signOut();
@@ -465,11 +596,11 @@
     if (S.mode === "demo") {
       badge.textContent = "DEMO"; badge.className = "badge demo";
       $("demoBar").hidden = false;
-      return showApp();
+      return afterLogin();
     }
     badge.textContent = "ONLINE"; badge.className = "badge live";
     const session = await S.getSession().catch(() => null);
-    if (session) showApp(); else $("loginView").hidden = false;
+    if (session) afterLogin(); else $("loginView").hidden = false;
   }
   init();
 })();

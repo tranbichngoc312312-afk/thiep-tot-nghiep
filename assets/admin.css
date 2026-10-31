@@ -164,3 +164,25 @@ audio { width: 100%; height: 36px; }
   .row2 { grid-template-columns: 1fr; }
   .phone { width: min(360px, 92vw); }
 }
+
+/* ===== tài khoản, đăng ký, mã kích hoạt ===== */
+.who { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; background: #f2f3f7; border-radius: 10px; padding: 3px; }
+.tabs button { border: 0; background: transparent; border-radius: 8px; padding: 7px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.tabs button.on { background: #fff; color: var(--accent); box-shadow: 0 1px 4px rgba(20,25,50,.1); }
+.login-card .slug-wrap { margin-top: 5px; }
+.login-card label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #4a4f63; }
+.codes { display: grid; gap: 8px; }
+.code-row { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.code-row code { font-size: 15px; font-weight: 700; letter-spacing: .06em; background: #eef0f6; padding: 4px 8px; }
+.code-row .meta { font-size: 12.5px; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.code-row .meta b { color: var(--ink); }
+.code-row.used code { background: #e3f5ec; color: var(--ok); }
+.code-row .acts { display: flex; gap: 6px; }
+.owner { font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
+
+/* khách: chỉ sửa được thiệp của mình */
+body.customer .side, body.customer #dupBtn, body.customer #delBtn, body.customer #codesBtn { display: none !important; }
+body.customer .shell { grid-template-columns: minmax(0, 1fr) 400px; }
+@media (max-width: 1180px) { body.customer .shell { grid-template-columns: minmax(0, 1fr); } }
+.slug-wrap input:disabled { background: #f6f7fa; color: var(--muted); }

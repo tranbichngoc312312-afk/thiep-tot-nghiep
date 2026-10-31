@@ -13,7 +13,7 @@
 <body>
 <header class="top">
   <div class="brand">Quản Lý Thiệp <span class="badge" id="modeBadge"></span></div>
-  <button class="ghost sm" id="logoutBtn" hidden>Đăng xuất</button>
+  <div class="who"><span id="whoEmail"></span><button class="ghost sm" id="logoutBtn" hidden>Đăng xuất</button></div>
 </header>
 
 <div class="demo-bar" id="demoBar" hidden>
@@ -21,15 +21,31 @@
   Điền Supabase vào <code>config.js</code> để dùng thật (xem <code>HUONG-DAN.md</code>).
 </div>
 
-<!-- Đăng nhập -->
+<!-- Đăng nhập / Đăng ký -->
 <section class="login" id="loginView" hidden>
   <form class="login-card" id="loginForm">
-    <h1>Đăng nhập</h1>
-    <p>Dùng tài khoản admin bạn đã tạo trong Supabase.</p>
+    <div class="tabs"><button type="button" class="on" data-tab="in">Đăng nhập</button><button type="button" data-tab="up">Đăng ký</button></div>
+    <h1 id="loginTitle">Đăng nhập</h1>
+    <p id="loginHint">Đăng nhập bằng email để làm thiệp của bạn.</p>
     <label>Email<input type="email" name="email" required autocomplete="username"></label>
-    <label>Mật khẩu<input type="password" name="password" required autocomplete="current-password"></label>
-    <button class="primary" type="submit">Đăng nhập</button>
+    <label>Mật khẩu<input type="password" name="password" required minlength="6" autocomplete="current-password"></label>
+    <label id="pw2Row" hidden>Nhập lại mật khẩu<input type="password" name="password2" minlength="6" autocomplete="new-password"></label>
+    <button class="primary" type="submit" id="loginBtn">Đăng nhập</button>
     <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<!-- Kích hoạt mã (khách chưa có thiệp) -->
+<section class="login" id="redeemView" hidden>
+  <form class="login-card" id="redeemForm">
+    <h1>Kích hoạt thiệp</h1>
+    <p>Nhập mã kích hoạt bạn được cấp và chọn tên link cho thiệp. Mỗi mã dùng được 1 lần, mỗi tài khoản có 1 thiệp. Tên link không đổi được sau khi tạo.</p>
+    <label>Mã kích hoạt<input type="text" name="code" required placeholder="VD: ABCD-EFGH" autocomplete="off" spellcheck="false" style="text-transform:uppercase;letter-spacing:.08em"></label>
+    <label>Tên link thiệp
+      <div class="slug-wrap"><span id="redeemBase"></span><input type="text" name="slug" required placeholder="vd: bich-ngoc" autocomplete="off" spellcheck="false"></div>
+    </label>
+    <button class="primary" type="submit">Kích hoạt</button>
+    <div class="err" id="redeemErr"></div>
   </form>
 </section>
 
@@ -37,6 +53,7 @@
 <div class="shell" id="appView" hidden>
   <aside class="side">
     <button class="primary block" id="newBtn">+ Tạo thiệp mới</button>
+    <button class="ghost block" id="codesBtn">🔑 Mã kích hoạt</button>
     <div class="list" id="invList"></div>
   </aside>
 
@@ -44,6 +61,19 @@
     <div class="empty-state" id="emptyState">
       <h2>Chưa chọn thiệp</h2>
       <p>Tạo thiệp mới cho bạn hoặc cho từng người bạn. Mỗi thiệp có một link riêng.</p>
+    </div>
+    <div id="codesBody" hidden>
+      <div class="bar"><div class="bar-title"><h2>Mã kích hoạt</h2></div>
+        <div class="bar-actions"><button class="ghost sm" id="codesClose">Đóng</button></div></div>
+      <div class="grp" style="padding:16px">
+        <div class="row2" style="align-items:end">
+          <label class="f"><span>Số lượng mã</span><input type="text" id="codeCount" value="1" inputmode="numeric"></label>
+          <label class="f"><span>Ghi chú (tên khách, đơn hàng…)</span><input type="text" id="codeNote" placeholder="không bắt buộc"></label>
+        </div>
+        <button class="primary" id="codeCreate" style="margin-top:12px">Tạo mã</button>
+        <small class="hint" style="display:block;margin-top:8px">Gửi mã cho khách. Khách vào trang này → Đăng ký → nhập mã → được tạo 1 thiệp và chỉ sửa được thiệp đó.</small>
+      </div>
+      <div id="codesList"></div>
     </div>
     <div id="editorBody" hidden>
       <div class="bar">

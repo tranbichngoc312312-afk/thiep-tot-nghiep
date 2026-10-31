@@ -49,6 +49,14 @@
       .replace(/đ/g, "d").replace(/Đ/g, "D")
       .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
 
+  // Mã kích hoạt dạng ABCD-EFGH (bỏ các ký tự dễ nhầm như 0/O, 1/I)
+  function makeCode() {
+    const abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", b = new Uint8Array(8);
+    crypto.getRandomValues(b);
+    const s = [...b].map(x => abc[x % abc.length]).join("");
+    return s.slice(0, 4) + "-" + s.slice(4);
+  }
+
   const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
 
   // Thu nhỏ ảnh trước khi tải lên cho nhẹ web
@@ -73,6 +81,7 @@
   function supabaseStore() {
     const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
     const check = ({ data, error }) => { if (error) throw error; return data; };
+    const INV_COLS = "id,slug,title,published,data,updated_at,owner_id,owner_email";
     return {
       mode: "supabase",
       async getInvitationBySlug(slug) {
@@ -96,13 +105,49 @@
         return data.session;
       },
       async signOut() { await sb.auth.signOut(); },
+      // Đăng ký khách; trả về session (null nếu Supabase còn bắt xác nhận email)
+      async signUp(email, password) {
+        const { data, error } = await sb.auth.signUp({ email, password });
+        if (error) throw error;
+        if (data.user && Array.isArray(data.user.identities) && !data.user.identities.length) throw new Error("User already registered");
+        return data.session;
+      },
+      async currentUser() {
+        const { data } = await sb.auth.getSession();
+        return data.session ? data.session.user : null;
+      },
+      async isAdmin() {
+        const { data, error } = await sb.rpc("is_admin");
+        if (error) throw error;
+        return !!data;
+      },
+      async getMyInvitation() {
+        const user = await this.currentUser();
+        if (!user) return null;
+        const { data, error } = await sb.from("invitations").select(INV_COLS).eq("owner_id", user.id).maybeSingle();
+        if (error) throw error;
+        return data;
+      },
+      async redeemCode(code, slug) {
+        const { data, error } = await sb.rpc("redeem_code", { p_code: code, p_slug: slug });
+        if (error) throw error;
+        return check(await sb.from("invitations").select(INV_COLS).eq("id", data).single());
+      },
+      async listCodes() {
+        return check(await sb.from("codes").select("code,note,created_at,used_email,used_at,invitation_id").order("created_at", { ascending: false }));
+      },
+      async createCodes(count, note) {
+        const rows = Array.from({ length: count }, () => ({ code: makeCode(), note: note || "" }));
+        return check(await sb.from("codes").insert(rows).select("code,note,created_at,used_email,used_at,invitation_id"));
+      },
+      async deleteCode(code) { check(await sb.from("codes").delete().eq("code", code).is("used_at", null)); },
       async listInvitations() {
-        return check(await sb.from("invitations").select("id,slug,title,published,data,updated_at").order("updated_at", { ascending: false }));
+        return check(await sb.from("invitations").select(INV_COLS).order("updated_at", { ascending: false }));
       },
       async saveInvitation(inv) {
         const row = { slug: inv.slug, title: inv.title || "", published: !!inv.published, data: inv.data, updated_at: new Date().toISOString() };
         const q = inv.id ? sb.from("invitations").update(row).eq("id", inv.id) : sb.from("invitations").insert(row);
-        return check(await q.select("id,slug,title,published,data,updated_at").single());
+        return check(await q.select(INV_COLS).single());
       },
       async deleteInvitation(id) { check(await sb.from("invitations").delete().eq("id", id)); },
       async deleteWish(id) { check(await sb.from("wishes").delete().eq("id", id)); },
@@ -140,6 +185,18 @@
       async getSession() { return { demo: true }; },
       async signIn() { return { demo: true }; },
       async signOut() {},
+      async signUp() { throw new Error("Đăng ký tài khoản khách cần kết nối Supabase."); },
+      async currentUser() { return { email: "demo" }; },
+      async isAdmin() { return true; },
+      async getMyInvitation() { return null; },
+      async redeemCode() { throw new Error("Kích hoạt mã cần kết nối Supabase."); },
+      async listCodes() { return read("demo-codes"); },
+      async createCodes(count, note) {
+        const rows = Array.from({ length: count }, () => ({ code: makeCode(), note: note || "", created_at: new Date().toISOString(), used_email: null, used_at: null }));
+        write("demo-codes", [...rows, ...read("demo-codes")]);
+        return rows;
+      },
+      async deleteCode(code) { write("demo-codes", read("demo-codes").filter(c => c.code !== code || c.used_at)); },
       async listInvitations() { return read(K_INV).sort((a, b) => (b.updated_at || "").localeCompare(a.updated_at || "")); },
       async saveInvitation(inv) {
         const list = read(K_INV);

@@ -91,3 +91,19 @@ Sau này muốn sửa thiệp thì chỉ cần vào `admin.html` sửa rồi b�
 - Tắt **Hiện công khai** thì link thiệp đó bị ẩn với khách, bạn vẫn sửa được.
 - Muốn mở link gốc (không kèm tên) ra thẳng một thiệp, điền tên link đó vào `DEFAULT_SLUG` trong `config.js`.
 - Thử trên máy: đừng bấm đúp mở file `.html`. Hãy mở bằng một server tĩnh (ví dụ tiện ích **Live Server** của VS Code), hoặc đẩy lên GitHub Pages rồi thử.
+
+---
+
+## Bán thiệp theo mã kích hoạt
+
+Khách tự đăng ký, nhập mã bạn cấp, rồi được tạo **đúng 1 thiệp** và chỉ sửa được thiệp đó. Khách không tạo thêm, không xóa, không đổi tên link được.
+
+**Cài một lần:**
+1. Supabase → **SQL Editor** → **New query** → dán toàn bộ `supabase-ban-thiep.sql` → **Run**.
+2. **Authentication → Sign In / Providers**: bật **Allow new users to sign up**. Nên tắt **Confirm email** để khách đăng ký xong dùng được ngay, vì email miễn phí của Supabase chỉ gửi được vài thư mỗi giờ.
+
+**Bán thiệp:**
+1. Đăng nhập `admin.html` bằng tài khoản admin, bấm **🔑 Mã kích hoạt**, rồi **Tạo mã** (có thể ghi chú tên khách).
+2. Gửi khách link `.../admin.html` và mã, ví dụ `ABCD-EFGH`.
+3. Khách: **Đăng ký** → nhập mã + chọn tên link → làm thiệp.
+4. Trong danh sách mã, bạn thấy mã nào đã dùng, dùng bởi email nào, link thiệp là gì. Admin vẫn sửa và xóa được mọi thiệp.
