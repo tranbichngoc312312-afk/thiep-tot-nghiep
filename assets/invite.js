@@ -13,30 +13,6 @@
   };
   const hideBoot = () => boot && boot.classList.add("leave");
 
-  /* ---------- mép giấy xé: ảnh trong assets/bg, gắn vào đầu section có [data-tear] ---------- */
-  function applyTears(root) {
-    let n = 0;
-    root.querySelectorAll("[data-tear]").forEach(el => {
-      const flip = el.dataset.tear === "bottom";
-      const v = flip ? "b" : (n++ % 3) + 1;
-      const mask = `url(assets/bg/torn-mask-${v}.png)`;
-      el.insertAdjacentHTML("afterbegin",
-        `<div class="tear${flip ? " flip" : ""}" style="-webkit-mask-image:${mask};mask-image:${mask}" aria-hidden="true"></div>` +
-        `<div class="tear-fx${flip ? " flip" : ""}" style="background-image:url(assets/bg/torn-fx-${v}.webp)" aria-hidden="true"></div>`);
-    });
-    alignTears();
-  }
-  // Mép xé lật ngược nằm giữa section: dời ảnh nền cho khớp liền với nền giấy của section chứa nó
-  function alignTears() {
-    app.querySelectorAll(".tear.flip").forEach(t => {
-      const host = t.closest(".paper");
-      if (!host) return;
-      const off = t.getBoundingClientRect().top - host.getBoundingClientRect().top;
-      t.style.backgroundPosition = `0 calc(${-off}px - var(--tearH))`;
-    });
-  }
-  window.addEventListener("resize", () => alignTears());
-
   /* ---------- ảnh ---------- */
   const photo = (src, cls = "", extra = "", inner = "") => {
     const u = safeUrl(src);
@@ -100,7 +76,7 @@
         <p class="tagline">${esc(D.tagline)}</p>
       </section>
 
-      <section class="sec date-sec paper" data-tear>
+      <section class="sec date-sec"><div class="sheet"></div>
         <div class="date-card">
           <div ${A("card-title", "pop", 1.3)}>Graduation Day</div>
           <div class="time">${esc(D.timeText)}, ${dows[date.getDay()]}</div>
@@ -112,11 +88,11 @@
           ${calendar(date)}
         </div>
       </section>
-      ${safeUrl(D.wide) || show ? photo(D.wide, "wide-photo") : `<div class="gap-photo paper"></div>`}
+      ${safeUrl(D.wide) || show ? photo(D.wide, "wide-photo") : `<div class="gap-photo"></div>`}
 
       ${filmSlots.length || safeUrl(D.filmBig) || show ? `
-      <section class="sec youth paper">
-        <div class="youth-title" data-tear="bottom">
+      <section class="sec youth"><div class="sheet"></div>
+        <div class="youth-title">
           <div ${A("s1", "fade-in-left", 1.5)}>${esc(D.youthTitle1)}</div>
           <div ${A("s2", "fade-in-right", 1.5)}>${esc(D.youthTitle2)}</div>
         </div>
@@ -129,7 +105,7 @@
         </div>
       </section>` : ""}
 
-      <section class="sec place paper" data-tear>
+      <section class="sec place"><div class="sheet-fill"></div><div class="sheet top"></div><div class="sheet bottom"></div>
         <div class="place-card">
           <div ${A("card-title", "pop", 1.3)}>Địa điểm</div>
           <div ${A("venue", "pop", 1.3)}>${esc(D.venue)}</div>
@@ -139,19 +115,19 @@
       </section>
 
       ${letter ? `
-      <section class="sec letter plain" data-tear>
+      <section class="sec letter">
         <h2 ${A("sec-title", "pop", 1.3)}>LƯU BÚT</h2>
         <div ${A("letter-body", "blur-in", 1)}>${letter}</div>
         <div ${A("sign", "blur-in", 2.3)}>${esc(D.signature || D.name)}</div>
       </section>` : ""}
 
       ${albumHtml ? `
-      <section class="sec album paper" data-tear>
+      <section class="sec album"><div class="sheet-fill"></div><div class="sheet top"></div><div class="sheet bottom"></div>
         <div ${A("album-title", "pop", 1.3)}>${esc(D.albumTitle)}</div>
         <div class="album-grid">${albumHtml}</div>
       </section>` : ""}
 
-      <section class="sec wish plain" data-tear>
+      <section class="sec wish">
         <h2 ${A("sec-title", "pop", 1.3)}>${esc(D.wishTitle)}</h2>
         <form id="wishForm" autocomplete="off">
           <input name="n" maxlength="60" placeholder="Tên của bạn là?" required>
@@ -179,7 +155,6 @@
     app.innerHTML = html;
     document.title = `${D.name} - Thiệp Mời Tốt Nghiệp`;
     document.documentElement.style.setProperty("--accent", accent);
-    applyTears(app);
     setupAnimations(state.rendered);
     setupAlbum();
     setupWishForm(inv, opts);
@@ -330,7 +305,7 @@
     app.innerHTML = `<div class="notice"><h1>${esc(title)}</h1><p>${text}</p></div>`;
     hideBoot();
   }
-  const ready = () => Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1500))]).then(() => { alignTears(); hideBoot(); });
+  const ready = () => Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1500))]).then(hideBoot);
 
   async function main() {
     if (isPreview) {

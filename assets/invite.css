@@ -4,11 +4,10 @@
   --slate: #334155;
   --gray: #6c6f7f;
   --outside: #f6f6f1;
-  --paper: #eaebed;
+  --paper: #eceef0;
   --plain: #f8fafc;
   --w: min(100vw, 430px);
   --u: calc(var(--w) / 375);
-  --tearH: calc(var(--w) * 280 / 860);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; }
@@ -16,7 +15,7 @@ body { background: var(--outside); color: var(--slate); font-family: "Quicksand"
 img { display: block; max-width: 100%; }
 button { font: inherit; }
 
-.inv { width: var(--w); margin: 0 auto; background: var(--paper); position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(20, 24, 40, .07); min-height: 100vh; }
+.inv { width: var(--w); margin: 0 auto; background: var(--plain); position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(20, 24, 40, .07); min-height: 100vh; }
 .sec { position: relative; }
 
 /* nền lụa + giấy hoa (assets/bg) */
@@ -27,15 +26,10 @@ button { font: inherit; }
   animation: silk-sheen 9s ease-in-out infinite;
 }
 .silk > * { position: relative; z-index: 1; }
-.paper { background: var(--paper) url(bg/paper.webp) 0 calc(-1 * var(--tearH)) / 256px; }
-.plain { background: var(--plain); }
-
-/* mép giấy xé: .tear là phần giấy (cùng nền với section, khoét theo mask), .tear-fx là nếp nhàu + viền trắng + bóng đổ */
-.tear, .tear-fx { position: absolute; left: 0; width: 100%; height: var(--tearH); top: 1px; transform: translateY(-100%); pointer-events: none; z-index: 4; }
-.tear { background: var(--paper) url(bg/paper.webp) 0 0 / 256px; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
-.plain > .tear { background: var(--plain); }
-.tear-fx { background: center / 100% 100% no-repeat; z-index: 5; }
-.tear.flip, .tear-fx.flip { top: auto; bottom: 1px; transform: translateY(100%); }
+/* Các tấm giấy xé đặt đúng toạ độ như mẫu (đơn vị --u = 1px của khung 375px).
+   .sheet là một khung cắt; ảnh nằm trong background với kích thước + vị trí đo từ mẫu. */
+.sheet { position: absolute; pointer-events: none; background-repeat: no-repeat; overflow: hidden; }
+.sheet-fill { position: absolute; left: 0; right: 0; pointer-events: none; background: var(--paper) url(bg/paper-tile.webp) 0 0 / 100% auto repeat-y; }
 
 /* ===== Ảnh ===== */
 .ph { background: linear-gradient(135deg, #d7dcea, #9aa6c8); position: relative; overflow: hidden; }
@@ -43,7 +37,7 @@ button { font: inherit; }
 .is-preview .ph.empty::after { content: "Chưa có ảnh"; position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.9); font: 600 13px "Quicksand", sans-serif; letter-spacing: .05em; }
 
 /* ===== BÌA ===== */
-.hero { padding: calc(17 * var(--u)) calc(22 * var(--u)) calc(118 * var(--u)); }
+.hero { padding: calc(17 * var(--u)) calc(22 * var(--u)) calc(91 * var(--u)); }
 .school { display: flex; align-items: center; gap: calc(11 * var(--u)); padding-left: calc(6 * var(--u)); }
 .school-logo { width: calc(61 * var(--u)); height: calc(61 * var(--u)); flex-shrink: 0; border-radius: 50%; overflow: hidden; background: var(--accent); color: #fff; display: grid; place-items: center; font: 400 calc(24 * var(--u)) "Viaoda Libre", serif; }
 .school-logo.has-img { background: transparent; border-radius: 0; }
@@ -61,7 +55,8 @@ button { font: inherit; }
 .tagline { text-align: center; margin-top: calc(28 * var(--u)); color: var(--accent); font: 400 calc(20 * var(--u)) / 1.35 "Viaoda Libre", serif; white-space: pre-line; }
 
 /* ===== NGÀY ===== */
-.date-sec { padding: calc(53 * var(--u)) calc(21 * var(--u)) 0; z-index: 6; }
+.date-sec { padding: calc(80 * var(--u)) calc(21 * var(--u)) 0; z-index: 6; }
+.date-sec > .sheet { top: calc(-88 * var(--u)); left: calc(-12 * var(--u)); width: calc(400 * var(--u)); height: calc(533 * var(--u)); background-image: url(bg/xe-a.webp); background-size: 100% 100%; z-index: 0; }
 .date-card { background: #fff; border-radius: calc(20 * var(--u)); padding: calc(25 * var(--u)) calc(16 * var(--u)) calc(26 * var(--u)); text-align: center; box-shadow: 0 12px 28px rgba(15, 23, 42, .26); position: relative; z-index: 6; margin-bottom: calc(-43 * var(--u)); }
 .card-title { color: var(--accent); font: 400 calc(24 * var(--u)) / 1.35 "Viaoda Libre", serif; text-transform: uppercase; }
 .time { margin-top: calc(24 * var(--u)); color: var(--accent); font: 700 calc(17 * var(--u)) / 1.35 "Playfair Display", serif; }
@@ -78,9 +73,11 @@ button { font: inherit; }
 .cal-grid .dow { font-weight: 700; }
 .cal-grid .d.on { font-weight: 700; animation: cal-heartbeat 1.4s ease-in-out infinite; }
 .wide-photo { height: calc(278 * var(--u)); }
-.gap-photo { height: calc(60 * var(--u)); }
+.gap-photo { height: calc(60 * var(--u)); background: var(--paper) url(bg/paper-tile.webp) 0 0 / 100% auto; }
 
 /* ===== THANH XUÂN ===== */
+.youth { z-index: 1; }
+.youth > .sheet { top: calc(-1 * var(--u)); left: calc(-2 * var(--u)); width: calc(378 * var(--u)); height: calc(221 * var(--u)); background-image: url(bg/xe-b-rot.webp); background-size: calc(405 * var(--u)) calc(540 * var(--u)); background-position: calc(-14 * var(--u)) calc(-319 * var(--u)); z-index: 5; }
 .youth .youth-title { position: relative; z-index: 6; padding: calc(8 * var(--u)) calc(48 * var(--u)) calc(26 * var(--u)) calc(45 * var(--u)); color: var(--accent); }
 .youth-title .s1 { font: 700 calc(55 * var(--u)) / 1.35 "Qwitcher Grypen", cursive; }
 .youth-title .s2 { font: 700 calc(35 * var(--u)) / 1.35 "Qwitcher Grypen", cursive; color: var(--gray); text-align: right; margin-top: calc(-25 * var(--u)); }
@@ -95,7 +92,11 @@ button { font: inherit; }
 .film-big { height: 100%; }
 
 /* ===== ĐỊA ĐIỂM ===== */
-.place { padding: calc(56 * var(--u)) calc(21 * var(--u)) calc(170 * var(--u)); }
+.place { padding: calc(56 * var(--u)) calc(21 * var(--u)) calc(125 * var(--u)); z-index: 2; }
+.place > .place-card { position: relative; z-index: 3; }
+.place > .sheet.top { top: calc(-81 * var(--u)); left: calc(-10 * var(--u)); width: calc(385 * var(--u)); height: calc(489 * var(--u)); background-image: url(bg/xe-a-mirror.webp); background-size: calc(453 * var(--u)) calc(604 * var(--u)); background-position: calc(-37 * var(--u)) calc(-23 * var(--u)); }
+.place > .sheet.bottom { bottom: 0; left: calc(-3 * var(--u)); width: calc(378 * var(--u)); height: calc(167 * var(--u)); background-image: url(bg/xe-b-rot.webp); background-size: calc(378 * var(--u)) calc(504 * var(--u)); background-position: 0 calc(-317 * var(--u)); }
+.place > .sheet-fill { top: calc(300 * var(--u)); bottom: calc(100 * var(--u)); }
 .place-card { background: #fff; border-radius: calc(20 * var(--u)); padding: calc(26 * var(--u)) calc(20 * var(--u)) calc(20 * var(--u)); text-align: center; box-shadow: 0 12px 28px rgba(15, 23, 42, .26); }
 .venue { color: var(--accent); margin-top: calc(16 * var(--u)); font: 400 calc(20 * var(--u)) / 1.35 "Itim", cursive; }
 .addr { color: var(--slate); margin-top: calc(7 * var(--u)); font: italic 400 calc(14 * var(--u)) / 1.35 "Patrick Hand", cursive; white-space: pre-line; }
@@ -103,14 +104,18 @@ button { font: inherit; }
 .map iframe { width: 100%; height: 100%; border: 0; display: block; }
 
 /* ===== LƯU BÚT ===== */
-.letter { padding: calc(20 * var(--u)) calc(30 * var(--u)) calc(157 * var(--u)); }
+.letter { padding: calc(65 * var(--u)) calc(30 * var(--u)) calc(15 * var(--u)); }
 .sec-title { text-align: center; color: var(--accent); font: 400 calc(24 * var(--u)) / 1.35 "Viaoda Libre", serif; text-transform: uppercase; }
 .letter-body { margin-top: calc(14 * var(--u)); }
 .letter-body p { color: var(--slate); text-align: justify; font: 400 calc(12 * var(--u)) / 1.35 "Arimo", sans-serif; margin-bottom: calc(16 * var(--u)); }
 .sign { color: var(--accent); text-align: center; margin-top: calc(10 * var(--u)); font: italic 400 calc(35 * var(--u)) / 1.35 "Grey Qo", cursive; }
 
 /* ===== ALBUM ===== */
-.album { padding: calc(20 * var(--u)) calc(18.5 * var(--u)) calc(154 * var(--u)); }
+.album { padding: calc(162 * var(--u)) calc(18.5 * var(--u)) calc(165 * var(--u)); }
+.album > .sheet.top { top: 0; left: calc(-12 * var(--u)); width: calc(400 * var(--u)); height: calc(533 * var(--u)); background-image: url(bg/xe-a-mirror.webp); background-size: 100% 100%; }
+.album > .sheet.bottom { bottom: 0; left: calc(-5.5 * var(--u)); width: calc(388 * var(--u)); height: calc(518 * var(--u)); background-image: url(bg/xe-a-vflip.webp); background-size: 100% 100%; }
+.album > .sheet-fill { top: calc(400 * var(--u)); bottom: calc(400 * var(--u)); }
+.album > .album-title, .album > .album-grid { position: relative; z-index: 2; }
 .album-title { text-align: center; color: var(--accent); margin-bottom: calc(14 * var(--u)); font: 700 calc(52 * var(--u)) / 1.35 "Qwitcher Grypen", cursive; }
 .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: calc(1.5 * var(--u)); }
 .album-grid .ph { cursor: zoom-in; height: calc(159 * var(--u)); }
@@ -119,7 +124,7 @@ button { font: inherit; }
 .album-grid .ph:hover img { transform: scale(1.04); }
 
 /* ===== LỜI NHẮN ===== */
-.wish { padding: calc(20 * var(--u)) calc(23 * var(--u)) calc(30 * var(--u)); }
+.wish { padding: calc(9 * var(--u)) calc(23 * var(--u)) calc(30 * var(--u)); }
 .wish form { display: grid; gap: calc(4 * var(--u)); margin-top: calc(18 * var(--u)); }
 .wish input, .wish textarea { width: 100%; border: 1px solid #98a2b3; border-radius: 8px; background: #fff; color: #111827; outline: none; font: 300 calc(12 * var(--u)) / 1.35 "Inter", sans-serif; transition: border-color .2s, box-shadow .2s; }
 .wish input { height: calc(23 * var(--u)); padding: 0 calc(10 * var(--u)); }
