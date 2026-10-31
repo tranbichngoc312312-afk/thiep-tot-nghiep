@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Quản Lý Thiệp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Viaoda+Libre&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">Quản Lý Thiệp <span class="badge" id="modeBadge"></span></div>
+  <button class="ghost sm" id="logoutBtn" hidden>Đăng xuất</button>
+</header>
+
+<div class="demo-bar" id="demoBar" hidden>
+  Đang chạy <b>chế độ DEMO</b>: dữ liệu chỉ lưu trên trình duyệt này và người khác không xem được.
+  Điền Supabase vào <code>config.js</code> để dùng thật (xem <code>HUONG-DAN.md</code>).
+</div>
+
+<!-- Đăng nhập -->
+<section class="login" id="loginView" hidden>
+  <form class="login-card" id="loginForm">
+    <h1>Đăng nhập</h1>
+    <p>Dùng tài khoản admin bạn đã tạo trong Supabase.</p>
+    <label>Email<input type="email" name="email" required autocomplete="username"></label>
+    <label>Mật khẩu<input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="primary" type="submit">Đăng nhập</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<!-- Trang quản lý -->
+<div class="shell" id="appView" hidden>
+  <aside class="side">
+    <button class="primary block" id="newBtn">+ Tạo thiệp mới</button>
+    <div class="list" id="invList"></div>
+  </aside>
+
+  <main class="editor" id="editor">
+    <div class="empty-state" id="emptyState">
+      <h2>Chưa chọn thiệp</h2>
+      <p>Tạo thiệp mới cho bạn hoặc cho từng người bạn. Mỗi thiệp có một link riêng.</p>
+    </div>
+    <div id="editorBody" hidden>
+      <div class="bar">
+        <div class="bar-title">
+          <h2 id="edTitle"></h2>
+          <span class="dirty" id="dirtyDot" hidden>Chưa lưu</span>
+        </div>
+        <div class="bar-actions">
+          <button class="ghost sm" id="previewToggle">Xem trước</button>
+          <button class="ghost sm" id="copyBtn">Sao chép link</button>
+          <a class="ghost sm" id="openBtn" target="_blank" rel="noopener">Mở thiệp ↗</a>
+          <button class="ghost sm" id="dupBtn">Nhân bản</button>
+          <button class="danger sm" id="delBtn">Xóa</button>
+          <button class="primary" id="saveBtn">Lưu</button>
+        </div>
+      </div>
+      <div class="link-row"><span>Link:</span> <a id="linkText" target="_blank" rel="noopener"></a></div>
+      <form id="form" autocomplete="off"></form>
+    </div>
+  </main>
+
+  <section class="preview" id="previewPane">
+    <div class="phone"><iframe id="previewFrame" title="Xem trước thiệp"></iframe></div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="assets/store.js"></script>
+<script src="assets/admin.js"></script>
+</body>
+</html>

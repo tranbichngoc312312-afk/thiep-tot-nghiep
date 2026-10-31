@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đang mở thiệp...</title>
+<script>
+  // GitHub Pages: link dạng /ten-repo/bich-ngoc không có file thật,
+  // nên chuyển về /ten-repo/?id=bich-ngoc để index.html mở đúng thiệp.
+  (function () {
+    var parts = location.pathname.replace(/\/+$/, "").split("/");
+    var slug = parts.pop();
+    var base = parts.join("/") + "/";
+    if (/^[a-z0-9-]{1,60}$/i.test(slug)) location.replace(base + "?id=" + encodeURIComponent(slug) + "&r=1");
+  })();
+</script>
+</head>
+<body style="font-family:sans-serif;text-align:center;padding:40px;color:#555">Không tìm thấy trang.</body>
+</html>
