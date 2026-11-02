@@ -1,5 +1,6 @@
 /* Số đo lấy theo khung thiết kế rộng 375px của mẫu; --u = 1px thiết kế, co giãn theo màn hình (tối đa 430px). */
 :root {
+  color-scheme: only light;
   --accent: #010e52;
   --slate: #334155;
   --gray: #6c6f7f;
