@@ -186,3 +186,21 @@ body.customer .side, body.customer #dupBtn, body.customer #delBtn, body.customer
 body.customer .shell { grid-template-columns: minmax(0, 1fr) 400px; }
 @media (max-width: 1180px) { body.customer .shell { grid-template-columns: minmax(0, 1fr); } }
 .slug-wrap input:disabled { background: #f6f7fa; color: var(--muted); }
+
+/* ===== điện thoại: thanh trên cùng gọn, không tràn ===== */
+.brand { white-space: nowrap; }
+#whoEmail { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 760px) {
+  .top { position: static; height: auto; min-height: 52px; padding: 8px 12px; gap: 6px 10px; flex-wrap: wrap; }
+  .brand { font-size: 18px; gap: 6px; }
+  .who { gap: 6px; min-width: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .who .ghost.sm { padding: 5px 9px; font-size: 12.5px; }
+  .bar { top: 0; }
+  .bar-title h2 { font-size: 21px; }
+}
+@media (max-width: 480px) {
+  .badge { display: none; }
+  .brand { margin-right: auto; }
+  .who { display: contents; }
+  #whoEmail { order: 3; flex-basis: 100%; max-width: none; text-align: right; font-size: 12px; margin-top: -2px; }
+}
