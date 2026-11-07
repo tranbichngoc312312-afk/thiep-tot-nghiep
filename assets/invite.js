@@ -30,6 +30,77 @@
       <div class="cal-body"><div class="wm">${y}</div><div class="cal-grid">${cells}</div></div></div>`;
   }
 
+  /* ---------- băng đeo (sash) bay ở trang bìa ---------- */
+  // đổi sáng/tối một màu hex (amt -1..1)
+  function shade(hex, amt) {
+    const n = parseInt(hex.slice(1), 16), t = amt < 0 ? 0 : 255, p = Math.abs(amt);
+    const ch = s => Math.round(((n >> s) & 255) + (t - ((n >> s) & 255)) * p);
+    return "#" + [16, 8, 0].map(s => ch(s).toString(16).padStart(2, "0")).join("");
+  }
+  // Viền băng gợn sóng: đầu treo đứng yên, càng xuống đuôi càng bay
+  function sashPath(phase, inset) {
+    const BODY = 298, TIP = 330, N = 16, L = [], R = [];
+    for (let i = 0; i <= N; i++) {
+      const y = BODY * i / N, k = y / BODY;
+      const w = Math.sin(y / 55 + phase) * 2.8 * k;
+      L.push(`${(8 + inset + w).toFixed(1)} ${y.toFixed(1)}`);
+      R.push(`${(72 - inset + w + Math.sin(y / 38 + phase) * 0.9 * k).toFixed(1)} ${y.toFixed(1)}`);
+    }
+    const tip = `${(40 + Math.sin(BODY / 55 + phase) * 3.4).toFixed(1)} ${(TIP - inset * 1.8).toFixed(1)}`;
+    return `M${L.join(" L")} L${tip} L${R.reverse().join(" L")} Z`;
+  }
+  function sashHtml(D, accent) {
+    const phases = [0, 1.57, 3.14, 4.71, 6.28];
+    const anim = inset => `<animate attributeName="d" dur="3.4s" repeatCount="indefinite" values="${phases.map(p => sashPath(p, inset)).join(";")}"/>`;
+    const name = (D.sashName || D.name || "").trim().toUpperCase();
+    const l2 = (D.sashLine2 || "").trim(), l3 = (D.sashLine3 || "").trim(), l4 = (D.sashLine4 || "").trim();
+    return `<div class="sash-wrap anim" style="--a:fade-in-down;--d:1.6s" aria-hidden="true">
+      <svg class="sash" viewBox="0 0 80 340">
+        <defs>
+          <linearGradient id="sashFill" x1="0" x2="1">
+            <stop offset="0" stop-color="${shade(accent, -0.35)}"/><stop offset=".42" stop-color="${accent}"/>
+            <stop offset=".55" stop-color="${shade(accent, 0.18)}"/><stop offset="1" stop-color="${shade(accent, -0.4)}"/>
+          </linearGradient>
+          <linearGradient id="sashGold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f7e6a6"/><stop offset=".5" stop-color="#d6b25e"/><stop offset="1" stop-color="#b38a37"/>
+          </linearGradient>
+          <linearGradient id="sashSheen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+            <animateTransform attributeName="gradientTransform" type="translate" values="0 -1;0 1" dur="4.2s" repeatCount="indefinite"/>
+          </linearGradient>
+        </defs>
+        <path d="${sashPath(0, 0)}" fill="url(#sashFill)" stroke="#e3c477" stroke-width=".8">${anim(0)}</path>
+        <path d="${sashPath(0, 0)}" fill="url(#sashSheen)" opacity=".22">${anim(0)}</path>
+        <path d="${sashPath(0, 3.2)}" fill="none" stroke="url(#sashGold)" stroke-width=".6" opacity=".8">${anim(3.2)}</path>
+        <path d="${sashPath(0, 5)}" fill="none" stroke="url(#sashGold)" stroke-width="1.3">${anim(5)}</path>
+        <g class="sash-cap" transform="translate(40 48)" fill="url(#sashGold)">
+          <path d="M-10 -1 L0 -6 L10 -1 L0 4 Z"/><path d="M-6 1.6 L-6 5.2 Q0 8.6 6 5.2 L6 1.6 L0 4.6 Z"/>
+          <path d="M8 -0.2 L8 6" stroke="url(#sashGold)" stroke-width=".8" fill="none"/><circle cx="8" cy="6.6" r="1.1"/>
+        </g>
+        <path class="sash-orn" d="M40 304 L43.5 309 L40 314 L36.5 309 Z" fill="url(#sashGold)"><animateTransform attributeName="transform" type="translate" values="0 0;1.6 0;0 0;-1.4 0;0 0" dur="3.4s" repeatCount="indefinite"/></path>
+        <polygon points="8,0 72,0 72,16 8,32" fill="${shade(accent, -0.45)}"/>
+        <line x1="8" y1="32" x2="72" y2="16" stroke="url(#sashGold)" stroke-width="1"/>
+        ${name ? `<text class="sash-name" transform="translate(27 64) rotate(90)">${esc(name)}</text>` : ""}
+        ${l2 ? `<text class="sash-l2" transform="translate(54 66) rotate(90)">${esc(l2)}</text>` : ""}
+        ${l3 ? `<text class="sash-l3" x="40" y="283" text-anchor="middle">${esc(l3)}</text>` : ""}
+        ${l4 ? `<text class="sash-l4" x="40" y="295" text-anchor="middle">${esc(l4)}</text>` : ""}
+      </svg>
+    </div>`;
+  }
+  // Chữ dọc quá dài thì co lại cho vừa thân băng
+  function fitSash() {
+    [[".sash-name", 200], [".sash-l2", 200]].forEach(([sel, max]) => {
+      const t = app.querySelector(sel);
+      if (!t) return;
+      t.removeAttribute("textLength");
+      if (t.getComputedTextLength() > max) { t.setAttribute("textLength", max); t.setAttribute("lengthAdjust", "spacingAndGlyphs"); }
+    });
+    [[".sash-l3", 56], [".sash-l4", 56]].forEach(([sel, max]) => {
+      const t = app.querySelector(sel);
+      if (t && t.getComputedTextLength() > max) { t.setAttribute("textLength", max); t.setAttribute("lengthAdjust", "spacingAndGlyphs"); }
+    });
+  }
+
   const A = (cls, a, d) => `class="${cls} anim" style="--a:${a};--d:${d}s"`;
 
   /* ---------- dựng trang ---------- */
@@ -63,7 +134,8 @@
 
     const html = `
     <main class="inv${show ? " is-preview" : ""}" style="--accent:${accent}">
-      <section class="sec hero silk">
+      <section class="sec hero silk${D.sashOn ? " has-sash" : ""}">
+        ${D.sashOn ? sashHtml(D, accent) : ""}
         <div class="school">
           <div ${A("school-logo" + (logo ? " has-img" : ""), "fade-in-down", 2)}>${logo ? `<img src="${esc(logo)}" alt="">` : esc((D.schoolEn || D.schoolVi || "U").trim().charAt(0))}</div>
           <div ${A("school-name", "fade-in-down", 3)}><b>${esc(D.schoolVi)}</b><span>${esc(D.schoolEn)}</span></div>
@@ -156,6 +228,7 @@
     document.title = `${D.name} - Thiệp Mời Tốt Nghiệp`;
     document.documentElement.style.setProperty("--accent", accent);
     setupAnimations(state.rendered);
+    if (D.sashOn) { fitSash(); if (document.fonts) document.fonts.ready.then(fitSash); }
     setupAlbum();
     setupWishForm(inv, opts);
     setupMusic(safeUrl(D.music));

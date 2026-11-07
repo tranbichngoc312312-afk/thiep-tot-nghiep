@@ -55,6 +55,21 @@ button { font: inherit; }
 .hero-photo .name { position: absolute; left: 0; right: 0; bottom: calc(20 * var(--u)); text-align: center; color: #fff; z-index: 2; font: 400 calc(33 * var(--u)) / 1.35 "WindSong", cursive; }
 .tagline { text-align: center; margin-top: calc(28 * var(--u)); color: var(--accent); font: 400 calc(20 * var(--u)) / 1.35 "Viaoda Libre", serif; white-space: pre-line; }
 
+/* ===== băng đeo (sash) bay ở trang bìa ===== */
+.hero .sash-wrap { position: absolute; left: calc(4 * var(--u)); top: calc(-10 * var(--u)); width: calc(80 * var(--u)); height: calc(340 * var(--u)); z-index: 3; pointer-events: none; }
+.sash { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 0; animation: sash-sway 4.6s ease-in-out infinite; filter: drop-shadow(2px 6px 6px rgba(0, 0, 0, .28)); }
+.sash-name { font: 700 15px "Playfair Display", serif; letter-spacing: 1.2px; fill: url(#sashGold); }
+.sash-l2 { font: 400 11px "Great Vibes", cursive; fill: #f1dc9c; }
+.sash-l3 { font: 700 9px "Playfair Display", serif; letter-spacing: .6px; fill: url(#sashGold); }
+.sash-l4 { font: 600 6.4px "Quicksand", sans-serif; fill: #f1dc9c; }
+.has-sash .school { padding-left: calc(88 * var(--u)); }
+@keyframes sash-sway {
+  0%, 100% { transform: rotate(-7deg) skewX(0deg); }
+  25% { transform: rotate(-5.4deg) skewX(-1.2deg); }
+  50% { transform: rotate(-7.8deg) skewX(.6deg); }
+  75% { transform: rotate(-6deg) skewX(1deg); }
+}
+
 /* ===== NGÀY ===== */
 .date-sec { padding: calc(80 * var(--u)) calc(21 * var(--u)) 0; z-index: 6; }
 .date-sec > .sheet { top: calc(-88 * var(--u)); left: calc(-12 * var(--u)); width: calc(400 * var(--u)); height: calc(533 * var(--u)); background-image: url(bg/xe-a.webp); background-size: 100% 100%; z-index: 0; }
@@ -222,5 +237,5 @@ button { font: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   .anim { opacity: 1; }
-  .anim.play, .film-track, .film .sprocket, .silk::after, .cal-grid .d.on, .send::after { animation: none !important; }
+  .anim.play, .film-track, .film .sprocket, .silk::after, .sash, .cal-grid .d.on, .send::after { animation: none !important; }
 }

@@ -25,7 +25,12 @@
       ["hero", "Ảnh chính", "image", "Ảnh dọc đẹp nhất (khoảng 2:3)."],
       ["titleBig", "Chữ lớn", "text", "", "half"],
       ["titleScript", "Chữ viết tay", "text", "", "half"],
-      ["tagline", "Câu dưới ảnh", "textarea"]
+      ["tagline", "Câu dưới ảnh", "textarea"],
+      ["sashOn", "Băng đeo (sash) bay ở góc trái", "toggle", "Bật để hiện băng đeo tốt nghiệp đung đưa ở góc trái trang bìa."],
+      ["sashName", "Chữ lớn trên băng", "text", "Để trống sẽ dùng tên người tốt nghiệp (tự viết hoa). Ví dụ: NGUYEN THANH CONG"],
+      ["sashLine2", "Dòng nhỏ dọc theo băng", "text", "Ví dụ: D22 CULTURAL INDUSTRIES"],
+      ["sashLine3", "Dòng ngang ở đuôi băng 1", "text", "Ví dụ: 22DCN1", "half"],
+      ["sashLine4", "Dòng ngang ở đuôi băng 2", "text", "Ví dụ: (2022-2026)", "half"]
     ] },
     { title: "Ngày giờ", items: [
       ["date", "Ngày tốt nghiệp", "date", "", "half"],
@@ -255,7 +260,7 @@
       if (v !== el.value) el.value = v;
     }
     set(k, v);
-    if (k === "_published") rerenderField(k);
+    if (ITEM[k] && ITEM[k][2] === "toggle") rerenderField(k);
     if (k === "name" || k === "_slug") renderHeader();
   });
   $("form").addEventListener("change", e => {
