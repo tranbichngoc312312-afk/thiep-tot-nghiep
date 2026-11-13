@@ -205,3 +205,17 @@ body.customer .shell { grid-template-columns: minmax(0, 1fr) 400px; }
   .who { display: contents; }
   #whoEmail { order: 3; flex-basis: 100%; max-width: none; text-align: right; font-size: 12px; margin-top: -2px; }
 }
+
+/* chọn mẫu giao diện */
+.themes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.theme-card { display: grid; gap: 3px; text-align: left; padding: 8px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer; font: inherit; color: var(--ink); }
+.theme-card i { display: block; height: 54px; border-radius: 6px; margin-bottom: 4px; }
+.theme-card.t-classic i { background: linear-gradient(180deg, #f3f3f3 0 45%, #eceef0 45%), #eceef0; box-shadow: inset 0 -14px 0 #010e52; }
+.theme-card.t-silk i { background: url(bg/silk-wc.webp) center / cover; box-shadow: inset 10px 0 0 #fff, inset 13px 0 0 #010e52, inset -10px 0 0 #fff, inset -13px 0 0 #010e52; }
+.theme-card b { font-size: 13.5px; }
+.theme-card small { font-size: 11.5px; color: var(--muted); line-height: 1.35; }
+.theme-card.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+/* xác nhận tham dự */
+.rsvp-sum { padding: 8px 10px; border-radius: 8px; background: #eef3fc; color: #1d2a5b; font-size: 13px; }
+.rsvp-badge { display: inline-block; padding: 1px 7px; border-radius: 99px; background: #e3ebfa; color: #010e52; font-size: 11.5px; font-weight: 700; }
+.rsvp-badge.no { background: #eef0f3; color: #6b7280; }

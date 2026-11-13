@@ -55,20 +55,127 @@ button { font: inherit; }
 .hero-photo .name { position: absolute; left: 0; right: 0; bottom: calc(20 * var(--u)); text-align: center; color: #fff; z-index: 2; font: 400 calc(33 * var(--u)) / 1.35 "WindSong", cursive; }
 .tagline { text-align: center; margin-top: calc(28 * var(--u)); color: var(--accent); font: 400 calc(20 * var(--u)) / 1.35 "Viaoda Libre", serif; white-space: pre-line; }
 
-/* ===== băng đeo (sash) bay ở trang bìa ===== */
-.hero .sash-wrap { position: absolute; left: calc(4 * var(--u)); top: calc(-10 * var(--u)); width: calc(80 * var(--u)); height: calc(340 * var(--u)); z-index: 3; pointer-events: none; }
-.sash { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 0; animation: sash-sway 4.6s ease-in-out infinite; filter: drop-shadow(2px 6px 6px rgba(0, 0, 0, .28)); }
-.sash-name { font: 700 15px "Playfair Display", serif; letter-spacing: 1.2px; fill: url(#sashGold); }
-.sash-l2 { font: 400 11px "Great Vibes", cursive; fill: #f1dc9c; }
-.sash-l3 { font: 700 9px "Playfair Display", serif; letter-spacing: .6px; fill: url(#sashGold); }
-.sash-l4 { font: 600 6.4px "Quicksand", sans-serif; fill: #f1dc9c; }
-.has-sash .school { padding-left: calc(88 * var(--u)); }
-@keyframes sash-sway {
-  0%, 100% { transform: rotate(-7deg) skewX(0deg); }
-  25% { transform: rotate(-5.4deg) skewX(-1.2deg); }
-  50% { transform: rotate(-7.8deg) skewX(.6deg); }
-  75% { transform: rotate(-6deg) skewX(1deg); }
+/* ===== phần đầu kiểu băng (sash): y theo mẫu — 2 dải băng 2 bên, giữa: trường, Graduation Ceremony, họ tên, câu trích ===== */
+/* mỗi dải vẽ 80 x 350 đơn vị, 1 đơn vị = 0.7656u (thân băng rộng 49u); canvas rộng hơn 2 bên để vải bay */
+.sash-wrap { position: absolute; top: calc(-1 * var(--u)); width: calc(61.25 * var(--u)); height: calc(268 * var(--u)); z-index: 3; pointer-events: none; }
+.sash-wrap.left { left: calc(24.2 * var(--u)); }
+.sash-wrap.right { right: calc(20 * var(--u)); }
+.sash-wrap canvas.sash { position: absolute; left: calc(-12.25 * var(--u)); top: 0; width: calc(85.75 * var(--u)); height: calc(274.1 * var(--u)); filter: drop-shadow(1px 5px 5px rgba(0, 0, 0, .28)); }
+.hero.has-sash { padding-top: calc(40 * var(--u)); background-image: url(bg/silk-2.webp); }
+.sx-school { display: flex; align-items: center; justify-content: center; gap: calc(8 * var(--u)); margin: 0 calc(82 * var(--u)); color: #262626; }
+.sx-logo { width: calc(45 * var(--u)); height: calc(47 * var(--u)); object-fit: contain; flex-shrink: 0; }
+.sx-school-name b { display: block; font: 600 calc(8.6 * var(--u)) / 1.5 "Montserrat", sans-serif; text-transform: uppercase; white-space: nowrap; }
+.sx-school-name span { display: block; margin-top: calc(1.5 * var(--u)); font: 500 calc(5.6 * var(--u)) / 1.3 "Montserrat", sans-serif; text-transform: uppercase; }
+.sx-title { position: relative; text-align: center; margin-top: calc(54 * var(--u)); }
+.sx-grad { font: 300 calc(34.7 * var(--u)) / 1 "Oswald", sans-serif; }
+.sx-g { color: #555; font: 400 calc(63 * var(--u)) / 0 "Pinyon Script", cursive; margin-right: calc(-1 * var(--u)); }
+/* chữ in: cao, mảnh, đậm bên trái nhạt dần sang phải như mẫu */
+.sx-sq { display: inline-block; transform-origin: 50% 100%; background: linear-gradient(90deg, #262626, #9a9a9a); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.sx-grad .sx-sq { transform: scaleY(1.17); }
+.sx-cere { position: relative; left: calc(8 * var(--u)); margin-top: calc(-3 * var(--u)); font: 320 calc(33.5 * var(--u)) / 1 "Oswald", sans-serif; }
+.sx-cere .sx-sq { transform: none; background-image: linear-gradient(90deg, #111, #6e6e6e); }
+.sx-y { margin-left: calc(-3 * var(--u)); color: #222; font: 400 calc(56 * var(--u)) / 0 "Pinyon Script", cursive; }
+.sx-cap { position: absolute; top: calc(-20 * var(--u)); right: calc(84 * var(--u)); width: calc(42 * var(--u)); color: #161616; fill: currentColor; transform: rotate(8deg); }
+.sx-name { margin-top: calc(54 * var(--u)); padding: 0 calc(6 * var(--u)); text-align: center; text-indent: calc(4 * var(--u)); white-space: nowrap; overflow: hidden; color: #252525; font: 400 calc(28 * var(--u)) / 1.5 "Ms Madi", cursive; letter-spacing: calc(4 * var(--u)); word-spacing: calc(2 * var(--u)); -webkit-text-stroke: calc(.2 * var(--u)) currentColor; }
+.sx-invite { margin-top: calc(18 * var(--u)); text-align: center; white-space: pre-line; color: #2b2b2b; font: italic 500 calc(13.1 * var(--u)) / 1.36 "Noto Serif", serif; }
+.has-sash .hero-photo { width: calc(258 * var(--u)); height: calc(300 * var(--u)); margin: calc(24 * var(--u)) auto 0; border: calc(4 * var(--u)) solid #fff; border-radius: calc(20 * var(--u)); box-shadow: 0 10px 26px rgba(0, 0, 0, .14); }
+@keyframes sash-unfurl {
+  0% { opacity: 0; clip-path: inset(0 -60% 100% -60%); }
+  12% { opacity: 1; }
+  100% { opacity: 1; clip-path: inset(-10% -60% -10% -60%); }
 }
+
+/* ================= MẪU "LỤA TRẮNG" (theme-silk) =================
+   Nền lụa trắng lặp liền theo chiều dọc; --accent: viền băng, tên, số; --ink: chữ đậm; --soft: chữ Graduation */
+.theme-silk { background: #f1f2f5 url(bg/silk-wc.webp) 0 0 / 100% auto repeat-y; color: var(--ink); }
+.theme-silk .sheet, .theme-silk .sheet-fill { display: none; }
+.lk-hero { padding: calc(15 * var(--u)) 0 calc(10 * var(--u)); }
+.lk-school { display: flex; align-items: center; justify-content: center; gap: calc(6 * var(--u)); margin: 0 calc(80 * var(--u)); color: var(--ink); }
+.lk-school .sx-logo { width: calc(42 * var(--u)); height: calc(42 * var(--u)); object-fit: contain; flex-shrink: 0; }
+/* chưa tải logo: vòng tròn màu chủ đạo có mũ tốt nghiệp */
+.lk-logo-ph { width: calc(42 * var(--u)); height: calc(42 * var(--u)); flex-shrink: 0; display: grid; place-items: center; border-radius: 50%; background: var(--accent); box-shadow: inset 0 0 0 calc(2 * var(--u)) rgba(255, 255, 255, .85), 0 0 0 calc(1 * var(--u)) var(--accent); }
+.lk-logo-ph svg { width: 64%; fill: #fff; }
+.lk-school-name { text-align: center; min-width: 0; }
+.lk-school-name b { display: block; font: 700 calc(10.6 * var(--u)) / 1.25 "Playfair Display", serif; text-transform: uppercase; }
+.lk-school-name span { display: block; margin-top: calc(3 * var(--u)); font: 400 calc(7.2 * var(--u)) / 1.2 "Playfair Display", serif; text-transform: uppercase; letter-spacing: .03em; }
+.lk-title { position: relative; text-align: center; margin-top: calc(44 * var(--u)); color: var(--soft); text-shadow: 1px 1px 0 #fff, 2px 3px 5px rgba(20, 50, 120, .2); }
+.lk-grad, .lk-cere { font: 400 calc(33 * var(--u)) / 1 "Playfair Display", serif; }
+.lk-cere { margin-top: calc(6 * var(--u)); padding-left: calc(12 * var(--u)); }
+.lk-g { font: 400 calc(66 * var(--u)) / 0 "Pinyon Script", cursive; margin-right: calc(-1 * var(--u)); }
+.lk-y { font: 400 calc(60 * var(--u)) / 0 "Pinyon Script", cursive; margin-left: calc(-3 * var(--u)); }
+.lk-cap { position: absolute; top: calc(-40 * var(--u)); right: calc(84 * var(--u)); width: calc(54 * var(--u)); transform: rotate(-4deg); filter: drop-shadow(0 3px 3px rgba(20, 50, 120, .2)); }
+.lk-invite { margin: calc(40 * var(--u)) calc(80 * var(--u)) 0; text-align: center; white-space: pre-line; color: color-mix(in srgb, var(--ink) 78%, #fff); font: 300 calc(14 * var(--u)) / 1.3 "Mali", sans-serif; }
+.lk-name { margin-top: calc(34 * var(--u)); padding: 0 calc(14 * var(--u)); text-align: center; white-space: nowrap; overflow: hidden; color: var(--accent); font: 400 calc(40 * var(--u)) / 1.45 "Great Vibes", cursive; word-spacing: calc(7 * var(--u)); -webkit-text-stroke: calc(.5 * var(--u)) currentColor; }
+.lk-photo { width: calc(246 * var(--u)); height: calc(246 * var(--u)); margin: calc(12 * var(--u)) auto 0; border: calc(3.5 * var(--u)) solid #fff; border-radius: calc(16 * var(--u)); box-shadow: 0 8px 24px rgba(20, 40, 90, .2); }
+
+.lk-date { text-align: center; padding: calc(28 * var(--u)) calc(20 * var(--u)) 0; color: var(--ink); }
+.lk-month, .lk-year { font: 700 calc(16 * var(--u)) / 1 "Playfair Display", serif; letter-spacing: .03em; }
+.lk-date-row { display: grid; grid-template-columns: 1fr calc(96 * var(--u)) 1fr; align-items: center; margin-top: calc(8 * var(--u)); }
+.lk-date-row .side { height: calc(40 * var(--u)); display: grid; place-items: center; border-top: 1.5px solid var(--accent); border-bottom: 1.5px solid var(--accent); white-space: nowrap; font: 700 calc(14.5 * var(--u)) / 1 "Playfair Display", serif; }
+.lk-date-row .day { color: var(--accent); font: 700 calc(56 * var(--u)) / 1 "Playfair Display", serif; }
+.lk-year { margin-top: calc(6 * var(--u)); letter-spacing: .1em; }
+.lk-count { display: grid; grid-template-columns: repeat(4, calc(67 * var(--u))); justify-content: center; gap: calc(8 * var(--u)); margin-top: calc(30 * var(--u)); }
+.lk-count div { border: 2px solid var(--accent); border-radius: calc(10 * var(--u)); padding: calc(9 * var(--u)) 0 calc(8 * var(--u)); background: rgba(255, 255, 255, .45); }
+.lk-count b { display: block; color: var(--accent); font: 700 calc(25 * var(--u)) / 1 "Playfair Display", serif; font-variant-numeric: tabular-nums; }
+.lk-count span { display: block; margin-top: calc(6 * var(--u)); font: 400 calc(8.5 * var(--u)) / 1 "Playfair Display", serif; letter-spacing: .12em; }
+
+.lk-moments { padding-top: calc(56 * var(--u)); text-align: center; overflow: hidden; }
+.lk-script { color: var(--ink); font: 400 calc(38 * var(--u)) / 1.3 "Ms Madi", cursive; }
+.ring { position: relative; height: calc(318 * var(--u)); margin-top: calc(18 * var(--u)); perspective: calc(900 * var(--u)); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.ring-floor { position: absolute; left: 12%; right: 12%; top: calc(268 * var(--u)); height: calc(46 * var(--u)); border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 22%, transparent), transparent); filter: blur(calc(6 * var(--u))); pointer-events: none; }
+.ring-stage { position: absolute; inset: 0; transform-style: preserve-3d; }
+/* ảnh giữa 196 x 276; ảnh 2 bên do JS thu nhỏ và dời sang */
+.ring-item { position: absolute; left: 50%; top: calc(4 * var(--u)); width: calc(196 * var(--u)); height: calc(276 * var(--u)); margin-left: calc(-98 * var(--u)); cursor: pointer; will-change: transform, opacity; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.ring-item.off { pointer-events: none; }
+.ring-card { width: 100%; height: 100%; border-radius: calc(14 * var(--u)); border: calc(3 * var(--u)) solid #fff; box-shadow: 0 12px 26px rgba(15, 30, 70, .26); }
+.ring-item.on .ring-card { cursor: zoom-in; }
+.ring-card img { -webkit-user-drag: none; pointer-events: none; }
+.ring-count { margin-top: calc(4 * var(--u)); text-align: center; color: color-mix(in srgb, var(--ink) 60%, #fff); font: 400 calc(13 * var(--u)) / 1 "Playfair Display", serif; letter-spacing: .1em; }
+.fl-spark { position: absolute; width: calc(var(--s) * var(--u)); height: calc(var(--s) * var(--u)); border-radius: 50%; background: #fff; box-shadow: 0 0 calc(5 * var(--u)) calc(1.5 * var(--u)) color-mix(in srgb, var(--accent) 45%, #fff); pointer-events: none; animation: fl-twinkle var(--t) ease-in-out var(--dl) infinite; }
+@keyframes fl-in { from { opacity: 0; transform: scale(.7) translateY(60px); } to { opacity: 1; transform: none; } }
+@keyframes fl-twinkle { 0%, 100% { opacity: .15; transform: translateY(0) scale(.6); } 50% { opacity: 1; transform: translateY(calc(-10 * var(--u))) scale(1); } }
+
+.lk-rsvp-wrap { text-align: center; padding: calc(34 * var(--u)) 0 calc(6 * var(--u)); }
+.lk-btn { position: relative; overflow: hidden; border: 0; cursor: pointer; width: calc(212 * var(--u)); height: calc(45 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--accent); color: #fff; font: 700 calc(14.5 * var(--u)) / 1 "Playfair Display", serif; letter-spacing: .03em; box-shadow: 0 8px 18px rgba(13, 50, 130, .3); transition: transform .15s, opacity .2s; }
+.lk-btn::after { content: ""; position: absolute; top: 0; bottom: 0; left: -55%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); animation: btn-shimmer 3.2s ease-in-out infinite; }
+.lk-btn:active { transform: scale(.96); }
+.lk-btn:disabled { opacity: .6; }
+
+/* các phần dùng chung khoác áo mẫu lụa */
+.theme-silk .place { padding: calc(36 * var(--u)) calc(21 * var(--u)) calc(30 * var(--u)); }
+.theme-silk .place-card { background: rgba(255, 255, 255, .86); box-shadow: 0 10px 26px rgba(20, 40, 90, .14); }
+.theme-silk .card-title, .theme-silk .sec-title { color: var(--ink); font-family: "Playfair Display", serif; font-weight: 700; }
+.theme-silk .venue { color: var(--accent); font: 700 calc(18 * var(--u)) / 1.35 "Playfair Display", serif; }
+.theme-silk .addr { font: 300 calc(13.5 * var(--u)) / 1.4 "Mali", sans-serif; }
+.theme-silk .letter { padding-top: calc(30 * var(--u)); }
+.theme-silk .sign { color: var(--accent); font-family: "Great Vibes", cursive; }
+.theme-silk .wish { padding-top: calc(26 * var(--u)); }
+.theme-silk .wish-item { background: rgba(255, 255, 255, .9); }
+.theme-silk ~ .music { width: 46px; height: 46px; background: #fff; box-shadow: 0 6px 18px rgba(20, 40, 90, .22); }
+.theme-silk ~ .music i { background: var(--accent); }
+
+/* hộp xác nhận tham dự */
+.rsvp { position: fixed; inset: 0; z-index: 70; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(10, 20, 50, .45); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.rsvp.open { display: flex; animation: fade .25s ease-out; }
+.rsvp-card { position: relative; width: min(100%, 360px); display: grid; gap: 10px; padding: 24px 18px 18px; border-radius: 16px; background: #fff url(bg/silk-wc.webp) 0 0 / 100% auto; box-shadow: 0 20px 50px rgba(0, 0, 0, .3); animation: card-lift .35s ease-out; }
+.rsvp-card h3 { text-align: center; color: var(--ink); font: 700 21px / 1.2 "Playfair Display", serif; }
+.rsvp-sub { text-align: center; margin-top: -4px; color: #64748b; font: 400 13px / 1.4 "Quicksand", sans-serif; }
+.rsvp-card .x { position: absolute; top: 6px; right: 8px; width: 34px; height: 34px; border: 0; background: none; color: #8a94a8; font-size: 26px; line-height: 1; cursor: pointer; }
+.rsvp-card input[name=n], .rsvp-card textarea, .rsvp-card select { width: 100%; border: 1px solid #c9d2e0; border-radius: 9px; background: #fff; color: #111827; outline: none; padding: 10px 12px; font: 400 16px / 1.3 "Quicksand", sans-serif; }
+.rsvp-card input:focus, .rsvp-card textarea:focus, .rsvp-card select:focus { border-color: var(--accent); }
+.rsvp-card textarea { height: 76px; resize: none; }
+.rsvp-opt { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rsvp-opt label { position: relative; }
+.rsvp-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.rsvp-opt span { display: block; padding: 11px 6px; border: 1.5px solid #c9d2e0; border-radius: 10px; background: #fff; text-align: center; color: #475569; font: 600 14px / 1.2 "Quicksand", sans-serif; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.rsvp-opt input:checked + span { border-color: var(--accent); background: var(--accent); color: #fff; }
+.rsvp-cnt { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #475569; font: 600 14px "Quicksand", sans-serif; }
+.rsvp-cnt[hidden] { display: none; }
+.rsvp-cnt select { width: auto; padding: 8px 10px; }
+.rsvp-card .lk-btn { width: 100%; height: 46px; font-size: 15px; border-radius: 10px; }
+.rsvp-msg { min-height: 18px; text-align: center; color: #64748b; font: 500 13px / 1.4 "Quicksand", sans-serif; }
+.rsvp-tag { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 99px; background: #e3ebfa; color: var(--accent); font-size: .82em; font-weight: 600; vertical-align: 1px; }
+.rsvp-tag.no { background: #eef0f3; color: #6b7280; }
 
 /* ===== NGÀY ===== */
 .date-sec { padding: calc(80 * var(--u)) calc(21 * var(--u)) 0; z-index: 6; }
@@ -237,5 +344,6 @@ button { font: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   .anim { opacity: 1; }
-  .anim.play, .film-track, .film .sprocket, .silk::after, .sash, .cal-grid .d.on, .send::after { animation: none !important; }
+  .anim.play, .film-track, .film .sprocket, .silk::after, .cal-grid .d.on, .send::after, .lk-btn::after { animation: none !important; }
+  .fl-spark { animation: none !important; }
 }

@@ -8,6 +8,7 @@
   // Nội dung mặc định của một thiệp mới
   const DEFAULT_DATA = {
     name: "Tên Của Bạn",
+    theme: "",
     accent: "#010e52",
     schoolVi: "Trường Đại học Của Bạn",
     schoolEn: "Your University",
@@ -16,10 +17,15 @@
     titleScript: "Ceremony",
     hero: "",
     sashOn: false,
+    sashLetters: "",
+    sashTop: "",
+    sashClass: "",
     sashName: "",
-    sashLine2: "",
-    sashLine3: "",
-    sashLine4: "",
+    sashBottom: "",
+    sxInvite: "Hy vọng trong bức tranh thanh xuân của tớ sẽ\ncó sự góp mặt của cậu",
+    inviteLine: "Trân trọng kính mời bạn\nđến dự lễ Tốt Nghiệp",
+    momentTitle: "Khoảnh khắc thanh xuân",
+    rsvpOn: true,
     tagline: "Closing one chapter,\nopening a new future...",
     date: "2026-11-16",
     timeText: "17:30 - 19:30",
@@ -47,6 +53,14 @@
   };
 
   const withDefaults = data => ({ ...DEFAULT_DATA, ...(data || {}) });
+
+  // Xác nhận tham dự lưu chung bảng lời chúc, đánh dấu ở đầu: "[RSVP:yes:2] lời nhắn" hoặc "[RSVP:no] lời nhắn"
+  const RSVP_RE = /^\[RSVP:(yes|no)(?::(\d+))?\]\s?/;
+  const parseRsvp = m => {
+    const x = RSVP_RE.exec(m || "");
+    return x ? { go: x[1], count: x[1] === "yes" ? Math.max(1, +(x[2] || 1)) : 0, text: String(m).slice(x[0].length).trim() } : null;
+  };
+  const rsvpMessage = (go, count, text) => `[RSVP:${go}${go === "yes" ? ":" + count : ""}]${text ? " " + text : ""}`;
 
   const slugify = s =>
     String(s || "")
@@ -223,5 +237,5 @@
     };
   }
 
-  window.Store = Object.assign(useSupabase ? supabaseStore() : demoStore(), { DEFAULT_DATA, withDefaults, slugify });
+  window.Store = Object.assign(useSupabase ? supabaseStore() : demoStore(), { DEFAULT_DATA, withDefaults, slugify, parseRsvp, rsvpMessage });
 })();

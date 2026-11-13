@@ -5,7 +5,18 @@
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-  const COLORS = ["#010e52", "#7a1f2b", "#2f5d50", "#5b3a7a", "#8a5a22", "#c2577a", "#2b2b2b"];
+  const COLORS = ["#010e52", "#1349a6", "#7a1f2b", "#2f5d50", "#5b3a7a", "#8a5a22", "#c2577a", "#2b2b2b"];
+  // các mẫu giao diện: [giá trị theme, tên, mô tả, màu gợi ý]
+  const THEMES = [
+    ["", "Cổ điển", "Giấy xé, lịch tháng, cuộn phim", "#010e52"],
+    ["silk", "Lụa trắng", "Nền lụa, 2 băng đeo, đếm ngược, ảnh trôi vòng, nút xác nhận tham dự", "#010e52"]
+  ];
+  // ô chỉ dùng cho một mẫu (không có ở đây = dùng cho mọi mẫu)
+  const ONLY = {
+    sashOn: "", tagline: "", sxInvite: "", wide: "", youthTitle1: "", youthTitle2: "", film: "", filmBig: "", albumTitle: "",
+    letter: "", signature: "",
+    sashClass: "silk", inviteLine: "silk", momentTitle: "silk", rsvpOn: "silk"
+  };
 
   // [khóa, nhãn, kiểu, gợi ý, "half" = xếp 2 cột]
   // khóa bắt đầu bằng "_" là cột của bảng (slug, published), còn lại nằm trong data
@@ -14,6 +25,7 @@
       ["name", "Tên người tốt nghiệp", "text"],
       ["_slug", "Tên link", "slug", "Chữ thường không dấu, số và dấu gạch ngang. Ví dụ: bich-ngoc"],
       ["_published", "Hiện công khai", "toggle", "Tắt đi thì người khác mở link sẽ không thấy thiệp."],
+      ["theme", "Mẫu giao diện", "theme"],
       ["accent", "Màu chủ đạo", "color"]
     ] },
     { title: "Trường học", items: [
@@ -26,11 +38,14 @@
       ["titleBig", "Chữ lớn", "text", "", "half"],
       ["titleScript", "Chữ viết tay", "text", "", "half"],
       ["tagline", "Câu dưới ảnh", "textarea"],
-      ["sashOn", "Băng đeo (sash) bay ở góc trái", "toggle", "Bật để hiện băng đeo tốt nghiệp đung đưa ở góc trái trang bìa."],
-      ["sashName", "Chữ lớn trên băng", "text", "Để trống sẽ dùng tên người tốt nghiệp (tự viết hoa). Ví dụ: NGUYEN THANH CONG"],
-      ["sashLine2", "Dòng nhỏ dọc theo băng", "text", "Ví dụ: D22 CULTURAL INDUSTRIES"],
-      ["sashLine3", "Dòng ngang ở đuôi băng 1", "text", "Ví dụ: 22DCN1", "half"],
-      ["sashLine4", "Dòng ngang ở đuôi băng 2", "text", "Ví dụ: (2022-2026)", "half"]
+      ["inviteLine", "Câu mời dưới chữ Graduation Ceremony", "textarea", "Để trống sẽ ẩn. Ảnh chính hiện trong khung vuông dưới họ tên."],
+      ["sashOn", "Phần đầu kiểu băng đeo (sash)", "toggle", "Bật để đổi phần đầu thiệp: 2 dải băng bay ở 2 góc, logo + tên trường căn giữa, chữ Graduation Ceremony có mũ, họ tên viết tay to bên dưới."],
+      ["sashLetters", "Băng trái: chữ viết tắt trường", "text", "Mỗi chữ cái một dòng, ví dụ VHU, NTTU. Để trống sẽ tự lấy chữ đầu tên trường tiếng Anh.", "half"],
+      ["sashTop", "Băng phải: chữ trên đầu", "text", "Ví dụ: K23 (không bắt buộc)", "half"],
+      ["sashClass", "Băng trái: chữ dưới cùng", "textarea", "Mỗi dòng một hàng, tối đa 3 dòng. Để trống sẽ là CLASS / OF / năm tốt nghiệp."],
+      ["sashName", "Băng phải: họ tên", "text", "Viết tay, in dọc. Để trống sẽ dùng tên người tốt nghiệp."],
+      ["sashBottom", "Băng phải: chữ nhỏ", "text", "Mẫu Cổ điển: chữ ở đuôi băng, ví dụ tên ngành. Mẫu Lụa trắng: dòng in dọc cạnh họ tên, để trống sẽ là GRADUATION · năm."],
+      ["sxInvite", "Câu trích dẫn dưới họ tên", "textarea", "Ví dụ: Hy vọng trong bức tranh thanh xuân của tớ sẽ có sự góp mặt của cậu. Để trống sẽ ẩn."]
     ] },
     { title: "Ngày giờ", items: [
       ["date", "Ngày tốt nghiệp", "date", "", "half"],
@@ -54,9 +69,11 @@
     ] },
     { title: "Album ảnh", items: [
       ["albumTitle", "Tiêu đề", "text"],
-      ["album", "Ảnh album", "images", "Cứ 3 ảnh thành một cụm: 2 ảnh nhỏ ở trên, 1 ảnh ngang ở dưới."]
+      ["momentTitle", "Tiêu đề", "text"],
+      ["album", "Ảnh album", "images", "Mẫu Cổ điển: cứ 3 ảnh thành một cụm, 2 ảnh nhỏ ở trên, 1 ảnh ngang ở dưới. Mẫu Lụa trắng: ảnh trôi vòng liên tục, ảnh giữa to, 2 bên nhỏ. Ảnh dọc đẹp nhất."]
     ] },
     { title: "Lời nhắn", items: [
+      ["rsvpOn", "Nút Xác nhận tham dự", "toggle", "Khách bấm nút để báo có đến hay không và đi mấy người. Kết quả xem ở mục Lời chúc đã nhận bên dưới."],
       ["wishTitle", "Tiêu đề", "text"],
       ["_wishes", "Lời chúc đã nhận", "wishes"]
     ] },
@@ -225,6 +242,11 @@
           </div>
           <input type="url" data-k="${k}" value="${esc(v && !v.startsWith("data:") ? v : "")}" placeholder="hoặc dán link file mp3">`;
         break;
+      case "theme":
+        inner = `<div class="themes">${THEMES.map(([t, name, desc]) => `
+          <button type="button" class="theme-card t-${t || "classic"}${(v || "") === t ? " on" : ""}" data-act="theme" data-t="${t}">
+            <i></i><b>${esc(name)}</b><small>${esc(desc)}</small></button>`).join("")}</div>`;
+        break;
       case "wishes":
         inner = wishesHtml(); break;
     }
@@ -234,12 +256,15 @@
   function renderForm() {
     const form = $("form");
     const opened = new Set([...form.querySelectorAll("details[open]")].map(d => d.dataset.g));
+    const theme = state.cur.data.theme || "";
     form.innerHTML = GROUPS.map((g, gi) => {
+      const items = g.items.filter(it => !(it[0] in ONLY) || ONLY[it[0]] === theme);
+      if (!items.length) return "";
       let body = "", i = 0;
-      while (i < g.items.length) {
-        const it = g.items[i];
-        if (it[4] === "half" && g.items[i + 1] && g.items[i + 1][4] === "half") {
-          body += `<div class="row2">${fieldHtml(it)}${fieldHtml(g.items[i + 1])}</div>`; i += 2;
+      while (i < items.length) {
+        const it = items[i];
+        if (it[4] === "half" && items[i + 1] && items[i + 1][4] === "half") {
+          body += `<div class="row2">${fieldHtml(it)}${fieldHtml(items[i + 1])}</div>`; i += 2;
         } else { body += fieldHtml(it); i++; }
       }
       const isOpen = opened.size ? opened.has(String(gi)) : g.open;
@@ -282,6 +307,16 @@
     const act = btn.dataset.act;
     if (act === "delwish") return deleteWish(btn.dataset.id);
     if (act === "color") { set(k, btn.dataset.c); rerenderField(k); return; }
+    if (act === "theme") {
+      const t = btn.dataset.t;
+      if ((get("theme") || "") === t) return;
+      // màu vẫn là màu gợi ý của mẫu cũ thì đổi sang màu gợi ý của mẫu mới
+      const from = THEMES.find(x => x[0] === (get("theme") || "")), to = THEMES.find(x => x[0] === t);
+      set("theme", t);
+      if (from && to && get("accent") === from[3]) set("accent", to[3]);
+      renderForm();
+      return;
+    }
     if (act === "clear") { set(k, ""); rerenderField(k); return; }
     if (act === "pick") {
       const files = await pickFiles(type === "audio" ? "audio/*" : "image/*");
@@ -347,8 +382,13 @@
   function wishesHtml() {
     if (!state.wishes.length) return `<div class="hint">Chưa có lời chúc nào.</div>`;
     const fmt = t => new Date(t).toLocaleString("vi-VN");
-    return `<div class="hint">${state.wishes.length} lời chúc</div><div class="wishes">${state.wishes.map(w => `
-      <div class="w-item"><div><b>${esc(w.name)}</b> <small>${esc(fmt(w.created_at))}</small><p>${esc(w.message)}</p></div>
+    const rows = state.wishes.map(w => ({ w, r: S.parseRsvp(w.message) }));
+    const yes = rows.filter(x => x.r && x.r.go === "yes"), no = rows.filter(x => x.r && x.r.go === "no");
+    const people = yes.reduce((s, x) => s + x.r.count, 0);
+    const summary = yes.length || no.length
+      ? `<div class="rsvp-sum"><b>${yes.length}</b> xác nhận sẽ đến (tổng <b>${people}</b> người) · <b>${no.length}</b> không đến được</div>` : "";
+    return `${summary}<div class="hint">${rows.length - yes.length - no.length} lời chúc${yes.length + no.length ? ` · ${yes.length + no.length} xác nhận tham dự` : ""}</div><div class="wishes">${rows.map(({ w, r }) => `
+      <div class="w-item"><div><b>${esc(w.name)}</b>${r ? ` <span class="rsvp-badge ${r.go}">${r.go === "yes" ? `Sẽ đến · ${r.count} người` : "Không đến"}</span>` : ""} <small>${esc(fmt(w.created_at))}</small>${!r || r.text ? `<p>${esc(r ? r.text : w.message)}</p>` : ""}</div>
       <button type="button" class="danger sm" data-act="delwish" data-id="${esc(w.id)}">Xóa</button></div>`).join("")}</div>`;
   }
   async function loadWishes() {
