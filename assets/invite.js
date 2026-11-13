@@ -14,9 +14,16 @@
   const hideBoot = () => boot && boot.classList.add("leave");
 
   /* ---------- ảnh ---------- */
-  const photo = (src, cls = "", extra = "", inner = "") => {
+  const photo = (src, cls = "", extra = "", inner = "", imgStyle = "") => {
     const u = safeUrl(src);
-    return `<div class="ph ${cls} ${u ? "" : "empty"}" ${extra}>${u ? `<img src="${esc(u)}" alt="" loading="lazy" decoding="async">` : ""}${inner}</div>`;
+    return `<div class="ph ${cls} ${u ? "" : "empty"}" ${extra}>${u ? `<img src="${esc(u)}" alt="" loading="lazy" decoding="async"${imgStyle ? ` style="${imgStyle}"` : ""}>` : ""}${inner}</div>`;
+  };
+  // khung ảnh chính chỉnh trong trang quản lý: "x,y,zoom" (x, y là % tâm ảnh; zoom 1–3)
+  const frameStyle = f => {
+    const [x, y, z] = String(f || "").split(",").map(Number);
+    if (![x, y, z].every(Number.isFinite)) return "";
+    const cx = Math.min(100, Math.max(0, x)), cy = Math.min(100, Math.max(0, y)), cz = Math.min(3, Math.max(1, z));
+    return `object-position:${cx}% ${cy}%;transform-origin:${cx}% ${cy}%;transform:scale(${cz})`;
   };
 
   /* ---------- lịch ---------- */
@@ -502,7 +509,7 @@
         </div>
         ${D.inviteLine ? `<p ${A("lk-invite", "blur-in", 1.6)}>${esc(D.inviteLine)}</p>` : ""}
         <div ${A("lk-name", "blur-in", 1.6)}>${esc(D.name)}</div>
-        ${photo(D.hero, "lk-photo")}
+        ${photo(D.hero, "lk-photo", "", "", frameStyle(D.heroFrame))}
       </section>
 
       <section class="sec lk-date">
@@ -785,7 +792,7 @@
           <div ${A("big", "fade-in-left", 1.5)}>${esc(D.titleBig)}</div>
           <div ${A("script", "fade-in-right", 1.5)}>${esc(D.titleScript)}</div>
         </div>`}
-        ${photo(D.hero, "hero-photo", "", D.sashOn ? "" : `<div ${A("name", "blur-in", 1)}>${esc(D.name)}</div>`)}
+        ${photo(D.hero, "hero-photo", "", D.sashOn ? "" : `<div ${A("name", "blur-in", 1)}>${esc(D.name)}</div>`, frameStyle(D.heroFrame))}
         <p class="tagline">${esc(D.tagline)}</p>
       </section>
 

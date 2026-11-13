@@ -16,6 +16,7 @@
     titleBig: "GRADUATION",
     titleScript: "Ceremony",
     hero: "",
+    heroFrame: "",
     sashOn: false,
     sashLetters: "",
     sashTop: "",

@@ -35,6 +35,7 @@
     ] },
     { title: "Ảnh bìa", items: [
       ["hero", "Ảnh chính", "image", "Ảnh dọc đẹp nhất (khoảng 2:3)."],
+      ["heroFrame", "Chỉnh khung ảnh chính", "frame", "Kéo ảnh trong khung để chọn phần muốn hiện, kéo thanh bên dưới để phóng to. Khung có đúng hình dạng như trên thiệp."],
       ["titleBig", "Chữ lớn", "text", "", "half"],
       ["titleScript", "Chữ viết tay", "text", "", "half"],
       ["tagline", "Câu dưới ảnh", "textarea"],
@@ -247,6 +248,21 @@
           <button type="button" class="theme-card t-${t || "classic"}${(v || "") === t ? " on" : ""}" data-act="theme" data-t="${t}">
             <i></i><b>${esc(name)}</b><small>${esc(desc)}</small></button>`).join("")}</div>`;
         break;
+      case "frame": {
+        const src = get("hero");
+        if (!src) return `<div class="f" data-field="${k}"><span>${esc(label)}</span><small class="hint">Chọn ảnh chính trước rồi chỉnh khung ở đây.</small></div>`;
+        const f = parseFrame(v);
+        inner = `<div class="frame-ed">
+          <div class="frame-box" style="aspect-ratio:${frameRatio()}" data-frame-box title="Kéo để di chuyển ảnh">
+            <img src="${esc(src)}" alt="" draggable="false" style="${frameCss(f)}">
+          </div>
+          <div class="frame-ctrl">
+            <span>Thu nhỏ</span><input type="range" min="1" max="3" step="0.01" value="${f.z}" data-frame-zoom aria-label="Phóng to ảnh"><span>Phóng to</span>
+          </div>
+          <button type="button" class="ghost sm" data-act="frame-reset">Đặt lại như cũ</button>
+        </div>`;
+        break;
+      }
       case "wishes":
         inner = wishesHtml(); break;
     }
@@ -276,6 +292,56 @@
     if (el) el.outerHTML = fieldHtml(ITEM[k]);
   }
 
+  /* ---------- chỉnh khung ảnh chính: lưu "x,y,zoom", thiệp dùng y hệt cách hiển thị này ---------- */
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  function parseFrame(s) {
+    const [x, y, z] = String(s || "").split(",").map(Number);
+    return [x, y, z].every(Number.isFinite) ? { x: clamp(x, 0, 100), y: clamp(y, 0, 100), z: clamp(z, 1, 3) } : { x: 50, y: 50, z: 1 };
+  }
+  const frameCss = f => `object-position:${f.x}% ${f.y}%;transform-origin:${f.x}% ${f.y}%;transform:scale(${f.z})`;
+  // khung trong ruột viền trắng của ảnh chính, theo mẫu đang chọn
+  const frameRatio = () => (get("theme") === "silk" ? "1 / 1" : get("sashOn") ? "250 / 292" : "331 / 498");
+  const round = n => Math.round(n * 10) / 10;
+  function setFrame(box, f) {
+    box.querySelector("img").style.cssText = frameCss(f);
+    set("heroFrame", f.x === 50 && f.y === 50 && f.z === 1 ? "" : `${round(f.x)},${round(f.y)},${Math.round(f.z * 100) / 100}`);
+  }
+  $("form").addEventListener("pointerdown", e => {
+    const box = e.target.closest("[data-frame-box]");
+    if (!box || e.button > 0) return;
+    e.preventDefault();
+    const img = box.querySelector("img");
+    const W = box.clientWidth, H = box.clientHeight;
+    const nw = img.naturalWidth || W, nh = img.naturalHeight || H;
+    const s = Math.max(W / nw, H / nh);
+    const f0 = parseFrame(get("heroFrame"));
+    // quãng ảnh trượt được khi x hoặc y đi từ 0 đến 100%: phần dư do phủ kín khung + phần dư do phóng to
+    const tx = (f0.z - 1) * W + f0.z * (nw * s - W), ty = (f0.z - 1) * H + f0.z * (nh * s - H);
+    const sx = e.clientX, sy = e.clientY;
+    box.setPointerCapture(e.pointerId);
+    box.classList.add("dragging");
+    const move = ev => {
+      const f = { ...f0 };
+      if (tx > 0.5) f.x = clamp(f0.x - (ev.clientX - sx) / tx * 100, 0, 100);
+      if (ty > 0.5) f.y = clamp(f0.y - (ev.clientY - sy) / ty * 100, 0, 100);
+      setFrame(box, f);
+    };
+    const up = () => {
+      box.classList.remove("dragging");
+      box.removeEventListener("pointermove", move);
+      box.removeEventListener("pointerup", up);
+      box.removeEventListener("pointercancel", up);
+    };
+    box.addEventListener("pointermove", move);
+    box.addEventListener("pointerup", up);
+    box.addEventListener("pointercancel", up);
+  });
+  $("form").addEventListener("input", e => {
+    if (!e.target.matches("[data-frame-zoom]")) return;
+    const box = e.target.closest(".frame-ed").querySelector("[data-frame-box]");
+    setFrame(box, { ...parseFrame(get("heroFrame")), z: clamp(+e.target.value, 1, 3) });
+  });
+
   $("form").addEventListener("input", e => {
     const el = e.target, k = el.dataset.k;
     if (!k) return;
@@ -286,6 +352,7 @@
     }
     set(k, v);
     if (ITEM[k] && ITEM[k][2] === "toggle") rerenderField(k);
+    if (k === "sashOn") rerenderField("heroFrame"); // khung ảnh đổi hình dạng
     if (k === "name" || k === "_slug") renderHeader();
   });
   $("form").addEventListener("change", e => {
@@ -317,7 +384,8 @@
       renderForm();
       return;
     }
-    if (act === "clear") { set(k, ""); rerenderField(k); return; }
+    if (act === "frame-reset") { set(k, ""); rerenderField(k); return; }
+    if (act === "clear") { set(k, ""); rerenderField(k); if (k === "hero") { set("heroFrame", ""); rerenderField("heroFrame"); } return; }
     if (act === "pick") {
       const files = await pickFiles(type === "audio" ? "audio/*" : "image/*");
       if (files[0]) upload(k, files.slice(0, 1));
@@ -367,6 +435,7 @@
         const url = await S.uploadFile(f, invId || "moi");
         if (!state.cur || state.cur.id !== invId) return; // đã chuyển sang thiệp khác
         set(k, multi ? [...(get(k) || []), url] : url);
+        if (k === "hero") { set("heroFrame", ""); rerenderField("heroFrame"); } // ảnh mới thì khung về giữa
       } catch (err) {
         console.error(err);
         toast(`Tải "${f.name}" không được: ${friendlyError(err)}`, true);
