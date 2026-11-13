@@ -452,6 +452,21 @@
     const name = (prompt("Nhân bản cho ai? (giữ nguyên trường, giờ, địa điểm… để bạn sửa tiếp)") || "").trim();
     if (name && src) createFrom(JSON.parse(JSON.stringify(S.withDefaults(src.data))), name);
   };
+  // "Mở thiệp" / bấm link: thiệp đang sửa chưa lưu thì lưu trước rồi mới mở, để trang mở ra đúng bản vừa sửa
+  async function openInvite(e) {
+    if (!state.cur) return;
+    const ask = !state.cur.published && !confirm("Thiệp đang tắt \"Hiện công khai\" nên mở link sẽ báo không tìm thấy. Bật hiện công khai rồi mở?");
+    if (!state.dirty && state.cur.id && (state.cur.published || ask)) return; // đã lưu: để link mở bình thường
+    e.preventDefault();
+    const win = window.open("about:blank", "_blank"); // mở tab ngay khi bấm để trình duyệt không chặn
+    if (!state.cur.published && !ask) { state.cur.published = true; rerenderField("_published"); markDirty(); }
+    await save();
+    if (state.dirty || !state.cur.id) { if (win) win.close(); return; } // lưu không được: save() đã báo lỗi
+    const link = publicLink(state.cur.slug);
+    if (win) win.location.href = link; else location.href = link;
+  }
+  $("openBtn").addEventListener("click", openInvite);
+  $("linkText").addEventListener("click", openInvite);
   $("delBtn").onclick = async () => {
     const c = state.cur;
     if (!confirm(`Xóa thiệp "${c.data.name}"? Lời chúc của thiệp này cũng bị xóa và không lấy lại được.`)) return;
