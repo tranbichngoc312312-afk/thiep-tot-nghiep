@@ -1,5 +1,5 @@
 -- =====================================================================
--- NÂNG CẤP BÁN THIỆP THEO MÃ — chạy 1 lần SAU file supabase-setup.sql
+-- NÂNG CẤP: CẤP THIỆP THEO MÃ — chạy 1 lần SAU file supabase-setup.sql
 -- Supabase → SQL Editor → New query → dán toàn bộ → Run
 --
 -- Khách tự đăng ký tài khoản → nhập mã kích hoạt do admin cấp → được tạo

@@ -94,15 +94,15 @@ Sau này muốn sửa thiệp thì chỉ cần vào `admin.html` sửa rồi b�
 
 ---
 
-## Bán thiệp theo mã kích hoạt
+## Cấp thiệp theo mã kích hoạt
 
 Khách tự đăng ký, nhập mã bạn cấp, rồi được tạo **đúng 1 thiệp** và chỉ sửa được thiệp đó. Khách không tạo thêm, không xóa, không đổi tên link được.
 
 **Cài một lần:**
-1. Supabase → **SQL Editor** → **New query** → dán toàn bộ `supabase-ban-thiep.sql` → **Run**.
+1. Supabase → **SQL Editor** → **New query** → dán toàn bộ `supabase-cap-thiep.sql` → **Run**.
 2. **Authentication → Sign In / Providers**: bật **Allow new users to sign up**. Nên tắt **Confirm email** để khách đăng ký xong dùng được ngay, vì email miễn phí của Supabase chỉ gửi được vài thư mỗi giờ.
 
-**Bán thiệp:**
+**Cấp thiệp:**
 1. Đăng nhập `admin.html` bằng tài khoản admin, bấm **🔑 Mã kích hoạt**, rồi **Tạo mã** (có thể ghi chú tên khách).
 2. Gửi khách link `.../admin.html` và mã, ví dụ `ABCD-EFGH`.
 3. Khách: **Đăng ký** → nhập mã + chọn tên link → làm thiệp.
